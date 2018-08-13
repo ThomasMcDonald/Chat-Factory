@@ -14,8 +14,7 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit() {
     this.socket = io.connect(this.url);
-    console.log(res['user']._id);
-    this.socket.emit("loginSetup",res['user']._id);
+    this.socket.emit("loginSetup",1);
     this.socket.on("loginDetails", (data) =>{
       console.log(data)
     })
