@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Router } from '@angular/router';
 import io from "socket.io-client";
 
 @Component({
@@ -15,7 +16,7 @@ export class LoginComponent implements OnInit {
     password: "",
   }
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient,private router: Router) {
 
    }
 
@@ -28,7 +29,8 @@ export class LoginComponent implements OnInit {
       .subscribe(
         res => {
           if(res['statusCode'] == "initiateSocket"){
-            
+            localStorage.setItem('UserDetails', JSON.stringify(res['user']));
+            this.router.navigate(['/dashboard']);
           }
         },
         err => {

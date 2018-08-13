@@ -1,4 +1,8 @@
-<p>
-  Dashboard works!
-</p>
-<!-- <router-outlet></router-outlet> -->
+<p>{{ userDetails._role }}</p>
+
+<div *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'">
+  <button (click)="createGroup()">Create Group</button>
+</div>
+
+
+<button (click)="logout()">Logout</button>

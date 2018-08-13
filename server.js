@@ -36,20 +36,20 @@ var io = require('socket.io').listen(server);
 
 
 app.post('/loginVerify', function (req, res) {
-    var realUser = false;
+    var realUser = { status: false, id:0 };
     for(i=0;i<Users.length;i++){
         if(Users[i]._username == req.body.username){
-            console.log("same same")
-            realUser = true;
+            realUser.status = true;
+            realUser.id = i;
         }
     }
-    if(!realUser){
+    if(!realUser.status){
      Users.push(new User(Ucount,req.body.username,"Peasant"));
      Ucount++;
      return res.send({ user: Users[Users.length-1], statusCode: "initiateSocket" })
     }
     else{
-      return res.send({ user: Users[0], statusCode: "initiateSocket" })
+      return res.send({ user: Users[realUser.id], statusCode: "initiateSocket" })
     }
 })
 
@@ -59,13 +59,12 @@ io.on('connection', function(socket){
 
   socket.on('loginSetup', function(id){
      userID = id;
-     console.log(id);
      Users[userID]._socket = socket.id;
     socket.emit('loginDetails',{groups: Groups, channels: Channels, users: Users})
   });
 
   socket.on('disconnect', function(){
-      Users[userID]._socket = null;
+      Users[userID]._socket = '';
       io.emit('User Disconnected', {disconnectedUser: Users[userID]._username, users: Users})
   });
 });
