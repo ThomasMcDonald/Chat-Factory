@@ -1,4 +1,6 @@
-<p>
-  login works!
-</p>
-<a routerLink="/dashboard">Dashboard</a>
+<form>
+  <input type="text" name="username" autocomplete="off" [(ngModel)]="userDetails.username"/>
+  <input type="password" name="password" [(ngModel)]="userDetails.password"/>
+</form>
+
+<button (click)="login()">Login</button>
