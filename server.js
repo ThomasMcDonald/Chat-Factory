@@ -17,6 +17,7 @@ var count = 0;
 var Ucount = 1;
 
 Users.push(new User(0,"Super","Super"));
+Groups.push(new Group(0,"Meme Group","memes",0));
 
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
 app.use(bodyParser.urlencoded({ extended: false }));

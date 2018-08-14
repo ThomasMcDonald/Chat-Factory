@@ -11,6 +11,7 @@ import io from "socket.io-client";
 export class LoginComponent implements OnInit {
   public socket;
   public url = 'http://localhost:8080';
+  public C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
   public userDetails = {
     username: "",
     password: "",
@@ -23,9 +24,9 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
 
-  // Once i get the positve response back i need to save details in local storage
+  // Once i get the positve response back I need to save details in local storage
   login(){
-    this.http.post(this.url+'/loginVerify', this.userDetails) // Sending password with no hash ;)
+    this.http.post(this.C9URL+'/loginVerify', this.userDetails) // Sending password with no hash ;)
       .subscribe(
         res => {
           if(res['statusCode'] == "initiateSocket"){
