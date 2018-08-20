@@ -1,8 +1,42 @@
-<p>{{ userDetails._role }}</p>
+<mat-drawer-container>
+  <mat-drawer mode="side" opened>
+    <button class="menuIcon" mat-icon-button [matMenuTriggerFor]="menu" style="padding:1em;">
+        <mat-icon>more_vert</mat-icon>
+    </button>
+    <mat-divider style="margin:1em;"></mat-divider>
+    <mat-menu #menu="matMenu">
+        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="createGroup()">
+            <mat-icon>create</mat-icon>
+            <span>Create Group</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+            <mat-icon>exit_to_app</mat-icon>
+            <span>Logout</span>
+        </button>
+    </mat-menu>
+    <mat-list>
+    <h3 mat-subheader style="color:#CCCADF">Groups</h3>
+      <mat-list-item class="group" *ngFor="let group of chatData">
+        <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
+        <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
+        <p matLine><span style="color:#CCCADF">hhhhhhh</span></p>
+      </mat-list-item>
+    
+       <h3 mat-subheader style="color:#CCCADF">Direct</h3>
+       
+    </mat-list>
+  </mat-drawer>
+  
+  
+  <mat-drawer-content class="content">
+    <mat-toolbar>
+      <span>Room Name</span>
+        <span class="spacer"></span>
+         <button mat-icon-button class="settings-icon"><mat-icon>add_circle</mat-icon></button>
+         <button mat-icon-button class="settings-icon"><mat-icon>settings</mat-icon></button>
+    </mat-toolbar>
+<p>USER ROLE: {{ userDetails._role }}</p>
 
-<div *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'">
-  <button (click)="createGroup()">Create Group</button>
-</div>
+</mat-drawer-content>
 
-
-<button (click)="logout()">Logout</button>
+</mat-drawer-container>
