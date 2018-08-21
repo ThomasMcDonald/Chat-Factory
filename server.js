@@ -14,13 +14,14 @@ var User = require('./server/models/user');
 var Groups = [];
 var Channels = [];
 var Users = [];
-var count = 0;
-var Ucount = 1;
 
+try {
+  fs.accessSync('./server/Utils/serverCache.txt');
+} catch (e) {
+ fs.closeSync(fs.openSync('./server/Utils/serverCache.txt', 'w'));
+}
 
 loadserverCache()
-//Users.push(new User(0,"Super","Super@gmail.com","Super"));
-//Groups.push(new Group(0,"Meme Group","memes",0));
 
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -29,12 +30,9 @@ app.get('/', function(req,res){
     res.sendFile(express.static(__dirname + '/dist/Chat-Factory'));
 });
 
-
-
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port
-    loadserverCache()
    console.log("Listening on %s", port)
 })
 var io = require('socket.io').listen(server);
@@ -64,8 +62,7 @@ app.post('/createUser', function (req, res) {
               return res.send({statusCode: "UserError", msg: "User Already Exists" })
         }
     }
-    Users.push(new User(Ucount,req.body.username,req.body.email,req.body.role));
-    Ucount++;
+    Users.push(new User(Users.length+1,req.body.username,req.body.email,req.body.role));
     res.send({statusCode: "User", msg: "User Created" })
     io.emit('newUser',{users: Users})
     fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {  
@@ -85,7 +82,6 @@ io.on('connection', function(socket){
 
   socket.on('loginSetup', function(id){
      userID = id;
-     console.log(Users)
      Users[userID]._socket = socket.id;
     socket.emit('loginDetails',{groups: Groups, channels: Channels, users: Users})
   });
@@ -106,6 +102,12 @@ io.on('connection', function(socket){
 // 
 function loadserverCache () {
     var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
+    if(data == '') {
+        Users.push(new User(0,"Super","Super@gmail.com","Super"));
+        Groups.push(new Group(0,"Meme Group","memes",0));
+        return { Users, Groups, Channels };
+    }
+    
     data = JSON.parse(data)
     Groups = data.groups;
     Channels = data.channels;
