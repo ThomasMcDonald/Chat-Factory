@@ -38,6 +38,8 @@ var server = app.listen(port, function () {
 var io = require('socket.io').listen(server);
 
 
+
+// User Routes
 app.post('/loginVerify', function (req, res) {
     var realUser = { status: false, id:0 };
     for(var i=0;i<Users.length;i++){
@@ -71,11 +73,49 @@ app.post('/createUser', function (req, res) {
 });
 });
 
+app.put('/updateUser', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
+
+app.delete('/removeUser', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
+
+// Group routes
+app.post('/createGroup', function (req, res) { 
+    console.log(req.body)
+});
+
+app.put('/updateGroup', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
+
+app.delete('/removeGroup', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
 
 
+// Channel Routes
+app.post('/createChannel', function (req, res) { 
+    console.log(req.body)
+});
+
+app.put('/updateChannel', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
+
+app.delete('/removeChannel', function (req, res) { 
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
 
 
-
+// Socket Functionality 
 io.on('connection', function(socket){
   console.log('a user connected');
   var userID;
