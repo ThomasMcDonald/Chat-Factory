@@ -16,7 +16,7 @@ var Users = [];
 var count = 0;
 var Ucount = 1;
 
-Users.push(new User(0,"Super","Super"));
+Users.push(new User(0,"Super","Super@gmail.com","Super"));
 Groups.push(new Group(0,"Meme Group","memes",0));
 
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
@@ -42,17 +42,34 @@ app.post('/loginVerify', function (req, res) {
         if(Users[i]._username == req.body.username){
             realUser.status = true;
             realUser.id = i;
+            break;
         }
     }
     if(!realUser.status){
-     Users.push(new User(Ucount,req.body.username,"Peasant"));
-     Ucount++;
-     return res.send({ user: Users[Users.length-1], statusCode: "initiateSocket" })
+        return res.send({statusCode: "UserError", msg: "User doesnt Exist" })
+     //Users.push(new User(Ucount,req.body.username,"Peasant"));
+     //Ucount++;
+    // return res.send({ user: Users[Users.length-1], statusCode: "initiateSocket" })
     }
     else{
       return res.send({ user: Users[realUser.id], statusCode: "initiateSocket" })
     }
 })
+
+
+
+app.post('/createUser', function (req, res) { 
+    console.log(req.body)
+    for(var i=0;i<Users.length;i++){
+        if(Users[i]._username == req.body.username){
+              return res.send({statusCode: "UserError", msg: "User Already Exists" })
+        }
+    }
+    Users.push(new User(Ucount,req.body.username,req.body.email,req.body.role));
+    Ucount++;
+    res.send({statusCode: "User", msg: "User Created" })
+    io.emit('newUser',{users: Users})
+});
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -67,5 +84,6 @@ io.on('connection', function(socket){
   socket.on('disconnect', function(){
       Users[userID]._socket = '';
       io.emit('User Disconnected', {disconnectedUser: Users[userID]._username, users: Users})
+      console.log("User Disconnected (Logged out)");
   });
 });

@@ -9,6 +9,10 @@
             <mat-icon>create</mat-icon>
             <span>Create Group</span>
         </button>
+        <button mat-menu-item *ngIf="userDetails._role == 'Super'" (click)="newUserModal()">
+            <mat-icon>create</mat-icon>
+            <span>Create User</span>
+        </button>
         <button mat-menu-item (click)="logout()">
             <mat-icon>exit_to_app</mat-icon>
             <span>Logout</span>
@@ -16,7 +20,7 @@
     </mat-menu>
     <mat-list>
     <h3 mat-subheader style="color:#CCCADF">Groups</h3>
-      <mat-list-item class="group" *ngFor="let group of chatData">
+      <mat-list-item class="group" *ngFor="let group of Groups">
         <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
         <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
         <p matLine><span style="color:#CCCADF">hhhhhhh</span></p>

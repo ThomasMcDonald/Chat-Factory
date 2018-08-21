@@ -23,6 +23,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit() {
   }
+  
 
   // Once i get the positve response back I need to save details in local storage
   login(){
@@ -33,6 +34,10 @@ export class LoginComponent implements OnInit {
             localStorage.setItem('UserDetails', JSON.stringify(res['user']));
             this.router.navigate(['/dashboard']);
           }
+          else if(res['statusCode'] == "UserError"){
+            console.log("ERROR")
+            this.router.navigate(['/login']);
+          }
         },
         err => {
           console.log("Error occured");
@@ -40,5 +45,6 @@ export class LoginComponent implements OnInit {
       );
   }
 
-
+  
 }
+

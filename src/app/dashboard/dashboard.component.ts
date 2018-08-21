@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import io from "socket.io-client";
+import { NewUserComponent } from '../new-user/new-user.component';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,17 +15,28 @@ export class DashboardComponent implements OnInit {
   public C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
   private socket;
   public userDetails;
-  public chatData = [];
-  public active = false;
+  
+  public Groups = [];
+  public Channels = [];
+  public Users = [];
+  
   messageValue = "";
-  constructor(private router: Router) {
+  
+  constructor(private router: Router, public dialog: MatDialog, private http: HttpClient) {
     this.userDetails = JSON.parse(localStorage.getItem('UserDetails'));
     this.socket = io.connect(this.C9URL);
     this.socket.emit("loginSetup",this.userDetails._id);
     this.socket.on("loginDetails", (data) =>{
-      this.chatData = data.groups; // This is all the Data I sent from the server (Groups, Channels and Users)
+      this.Groups = data.groups;
+      this.Users = data.users;
+      this.Channels = data.channels;
       console.log(data);
-      console.log(this.chatData);
+      console.log(this.Groups);
+    })
+    
+     this.socket.on("newUser", (data) =>{
+      this.Users = data.users; // This is all the Data I sent from the server (Groups, Channels and Users)
+      console.log(this.Users);
     })
   }
 
@@ -38,6 +52,28 @@ export class DashboardComponent implements OnInit {
 
   createGroup(){
     console.log("Create Group");
+  }
+  
+  newUserModal(){
+    let dialogRef = this.dialog.open(NewUserComponent, {
+      width: '600px',
+      data: 'This text is passed into the dialog!'
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.createUser(result);
+    });
+  }
+  
+   createUser(result){
+    this.http.post(this.C9URL+'/createUser', result) 
+      .subscribe(
+        res => {
+            console.log(res)
+        },
+        err => {
+          console.log("Error occured");
+        }
+      );
   }
 
 
