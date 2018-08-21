@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
             this.router.navigate(['/dashboard']);
           }
           else if(res['statusCode'] == "UserError"){
-            console.log("ERROR")
+            console.log("User Doesnt Exist")
             this.router.navigate(['/login']);
           }
         },

@@ -12,7 +12,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 })
 export class DashboardComponent implements OnInit {
   private url = 'http://localhost:8080';
-  public C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
+  private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
   private socket;
   public userDetails;
   
@@ -60,22 +60,7 @@ export class DashboardComponent implements OnInit {
       data: 'This text is passed into the dialog!'
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.createUser(result);
+      console.log(result)
     });
   }
-  
-   createUser(result){
-    this.http.post(this.C9URL+'/createUser', result) 
-      .subscribe(
-        res => {
-            console.log(res)
-        },
-        err => {
-          console.log("Error occured");
-        }
-      );
-  }
-
-
-
 }

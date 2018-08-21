@@ -1,6 +1,6 @@
 <div>
     <h2 mat-dialog-title>Create New User</h2>
-     <form [formGroup]="newUserForm" (submit)="onCloseConfirm()">
+     <form [formGroup]="newUserForm" (ngSubmit)="onCloseConfirm()">
     <mat-dialog-content class="mat-typography login">
             <mat-form-field class="full-width">
                 <input matInput placeholder="Email" formControlName="email" required>
@@ -22,7 +22,9 @@
     </mat-dialog-content>
     <p> {{ newUserForm.status }}</p>
   <mat-dialog-actions>
-    <button  type="submit" mat-raised-button color="primary" [disabled]="newUserForm.status != 'VALID'">Create</button>
+    <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner">Create
+        <mat-spinner color="accent" mode="indeterminate" *ngIf="showSpinner"></mat-spinner>
+    </button>
     <button mat-raised-button (click)="onCloseCancel()">CANCEL</button>
   </mat-dialog-actions>
   </form>

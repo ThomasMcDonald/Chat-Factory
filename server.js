@@ -4,6 +4,7 @@ var bodyParser = require('body-parser')
 var app = express()
 var http = require('http').Server(app)
 var bodyPaser = bodyParser.json()
+const fs = require('fs');
 var port = process.env.PORT || 8080;
 
 var Group = require('./server/models/group');
@@ -16,8 +17,10 @@ var Users = [];
 var count = 0;
 var Ucount = 1;
 
-Users.push(new User(0,"Super","Super@gmail.com","Super"));
-Groups.push(new Group(0,"Meme Group","memes",0));
+
+loadserverCache()
+//Users.push(new User(0,"Super","Super@gmail.com","Super"));
+//Groups.push(new Group(0,"Meme Group","memes",0));
 
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -27,10 +30,11 @@ app.get('/', function(req,res){
 });
 
 
+
 var server = app.listen(port, function () {
    var host = server.address().address
    var port = server.address().port
-
+    loadserverCache()
    console.log("Listening on %s", port)
 })
 var io = require('socket.io').listen(server);
@@ -38,7 +42,7 @@ var io = require('socket.io').listen(server);
 
 app.post('/loginVerify', function (req, res) {
     var realUser = { status: false, id:0 };
-    for(i=0;i<Users.length;i++){
+    for(var i=0;i<Users.length;i++){
         if(Users[i]._username == req.body.username){
             realUser.status = true;
             realUser.id = i;
@@ -47,16 +51,11 @@ app.post('/loginVerify', function (req, res) {
     }
     if(!realUser.status){
         return res.send({statusCode: "UserError", msg: "User doesnt Exist" })
-     //Users.push(new User(Ucount,req.body.username,"Peasant"));
-     //Ucount++;
-    // return res.send({ user: Users[Users.length-1], statusCode: "initiateSocket" })
     }
     else{
       return res.send({ user: Users[realUser.id], statusCode: "initiateSocket" })
     }
 })
-
-
 
 app.post('/createUser', function (req, res) { 
     console.log(req.body)
@@ -69,7 +68,16 @@ app.post('/createUser', function (req, res) {
     Ucount++;
     res.send({statusCode: "User", msg: "User Created" })
     io.emit('newUser',{users: Users})
+    fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {  
+    if (err) throw err;
+    console.log('Server saved!');
 });
+});
+
+
+
+
+
 
 io.on('connection', function(socket){
   console.log('a user connected');
@@ -77,6 +85,7 @@ io.on('connection', function(socket){
 
   socket.on('loginSetup', function(id){
      userID = id;
+     console.log(Users)
      Users[userID]._socket = socket.id;
     socket.emit('loginDetails',{groups: Groups, channels: Channels, users: Users})
   });
@@ -87,3 +96,25 @@ io.on('connection', function(socket){
       console.log("User Disconnected (Logged out)");
   });
 });
+
+
+
+
+//
+// Reads in the server data and assigns the contents to the appropriate variables
+// Loop over the Users array to remove any socket data that may be present, no socket connections will be present when server is starting up.
+// 
+function loadserverCache () {
+    var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
+    data = JSON.parse(data)
+    Groups = data.groups;
+    Channels = data.channels;
+    Users = data.users;
+      
+    for(var i=0;i<Users.length;i++){
+        if(Users[i]._socket !== undefined){
+            delete Users[i]._socket;
+          }
+      }
+      return { Users, Groups, Channels };
+}
