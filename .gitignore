@@ -4,6 +4,7 @@
 /dist
 /tmp
 /out-tsc
+/server/Utils/serverCache.txt
 
 # dependencies
 /node_modules
