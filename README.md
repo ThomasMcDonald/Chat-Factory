@@ -1,27 +1,56 @@
 # Chat Factory
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 6.1.3.
+## Git Repository
+The purpose of this Git repo is to manage the project, as they change over time. Git stores this information in a data structure called a repository. A git repository contains, among other things, the following: A set of commit objects. A certain points in the development of this solution new branches were created to ensure safe development of different features.
 
-## Development server
+## Data Structures
+The users, groups and channels arrays are arrays of objects. Each element of the array was an object that contained specific information for a user, group or channel.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+```
+var Users = [];
+var Groups = [];
+var Channels = []; 
+```
 
-## Code scaffolding
+For each array i created a model that defined what data would be in each object
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+User Model:
+```
+var User = function (id,name,email,role) {
+    this._id = id;
+    this._username = name;
+    this._email = email;
+    this._inChannel = [];
+    this._role = role;
+    this._socket;
+};
 
-## Build
+module.exports = User;
+```
+Group Model:
+```
+var Group = function (id,name,topic,owner) {
+    this._id = id;
+    this._name = name;
+    this._topic = topic;
+    this._owner = owner;
+    this._haschannels = [];
+}
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+module.exports = Group;
+```
+Channel Model:
+```
+var Channel = function (id, name,topic,groupID,created_at,created_by) {
+    this._id = id;
+    this._name = name;
+    this._topic = topic;
+    this._groupID = groupID;
+    this._createdAt = created_at;
+    this._createdBy = created_by;
+};
 
-## Running unit tests
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+module.exports = Channel;
 
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+```
