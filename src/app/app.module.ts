@@ -9,10 +9,15 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MatSidenavModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatCardModule, MatGridListModule, MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatListModule, MatDialogModule, MatSelectModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
+
+// Pages
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { NewUserComponent } from './new-user/new-user.component';
 import { RoomComponent } from './room/room.component';
+
+//Modal Dialog
+import { NewUserComponent } from './modals/new-user/new-user.component';
+import { AddToGroupComponent } from './modals/add-to-group/add-to-group.component';
 
 
 @NgModule({
@@ -21,7 +26,8 @@ import { RoomComponent } from './room/room.component';
     LoginComponent,
     DashboardComponent,
     NewUserComponent,
-    RoomComponent
+    RoomComponent,
+    AddToGroupComponent
   ],
   imports: [
     BrowserModule,
@@ -46,7 +52,7 @@ import { RoomComponent } from './room/room.component';
     MatDialogModule,
     MatSelectModule
   ],
-  entryComponents: [NewUserComponent],
+  entryComponents: [NewUserComponent,AddToGroupComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

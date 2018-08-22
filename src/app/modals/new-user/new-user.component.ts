@@ -21,20 +21,20 @@ export class NewUserComponent implements OnInit {
     role: ['',Validators.required]
   });
 
-  
+
   constructor(public dialogRef: MatDialogRef<NewUserComponent>, private fb: FormBuilder, private http: HttpClient) { }
 
   ngOnInit() {
   }
-  
+
   onCloseConfirm() {
-    this.http.post(this.C9URL+'/createUser', this.newUserForm.value) 
+    this.http.post(this.url+'/createUser', this.newUserForm.value)
       .subscribe(
         res => {
           this.dialogRef.close(res);
         },
         err => {
-          console.log("Error occured");
+          console.log("Error occured", err);
         }
       );
   }

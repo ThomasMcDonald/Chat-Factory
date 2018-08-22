@@ -2,7 +2,7 @@
     <mat-toolbar *ngIf="currentGroup">
         <span>{{currentGroup._name}}</span>
         <span class="spacer"></span>
-         <button mat-icon-button class="settings-icon"><mat-icon>add_circle</mat-icon></button>
+         <button mat-icon-button class="settings-icon" (click)="openAddToGroup()"><mat-icon>add_circle</mat-icon></button>
          <button mat-icon-button class="settings-icon"><mat-icon>settings</mat-icon></button>
     </mat-toolbar>
 </div>

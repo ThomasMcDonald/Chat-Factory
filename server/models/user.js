@@ -4,7 +4,7 @@ var User = function (id,name,email,role) {
     this._email = email;
     this._inChannel = [];
     this._role = role;
-    this._socket;
+    this._socket = "";
 };
 
 module.exports = User;

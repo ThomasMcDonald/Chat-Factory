@@ -57,67 +57,67 @@ app.post('/loginVerify', function (req, res) {
     }
 })
 
-app.post('/createUser', function (req, res) { 
+app.post('/createUser', function (req, res) {
     for(var i=0;i<Users.length;i++){
         if(Users[i]._username == req.body.username){
               return res.send({statusCode: "UserError", msg: "User Already Exists" })
         }
     }
-    Users.push(new User(Users.length+1,req.body.username,req.body.email,req.body.role));
+    Users.push(new User(Users.length,req.body.username,req.body.email,req.body.role));
     res.send({statusCode: "User", msg: "User Created" })
     io.emit('newUser',{users: Users})
-    fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {  
+    fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     if (err) throw err;
 });
 });
 
-app.put('/updateUser', function (req, res) { 
+app.put('/updateUser', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
-app.delete('/removeUser', function (req, res) { 
+app.delete('/removeUser', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
 // Group routes
-app.post('/createGroup', function (req, res) { 
+app.post('/createGroup', function (req, res) {
     console.log(req.body)
 });
 
-app.post('/getGroup', function (req, res) { 
+app.post('/getGroup', function (req, res) {
      return res.send({ currentGroup: Groups[req.body.groupID], statusCode: "Success" })
 });
 
-app.put('/updateGroup', function (req, res) { 
+app.put('/updateGroup', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
-app.delete('/removeGroup', function (req, res) { 
+app.delete('/removeGroup', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
 
 // Channel Routes
-app.post('/createChannel', function (req, res) { 
+app.post('/createChannel', function (req, res) {
     console.log(req.body)
 });
 
-app.put('/updateChannel', function (req, res) { 
-    console.log(req.body)
-    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
-});
-
-app.delete('/removeChannel', function (req, res) { 
+app.put('/updateChannel', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
+app.delete('/removeChannel', function (req, res) {
+    console.log(req.body)
+    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
 
-// Socket Functionality 
+
+// Socket Functionality
 io.on('connection', function(socket){
   console.log('a user connected');
   var userID;
@@ -141,20 +141,21 @@ io.on('connection', function(socket){
 //
 // Reads in the server data and assigns the contents to the appropriate variables
 // Loop over the Users array to remove any socket data that may be present, no socket connections will be present when server is starting up.
-// 
+//
 function loadserverCache () {
     var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
     if(data == '') {
-        Users.push(new User(0,"Super","Super@gmail.com","Super"));
-        Groups.push(new Group(0,"Meme Group","memes",0));
+        Users.push(new User(Users.length,"Super","Super@gmail.com","Super"));
+        Groups.push(new Group(Groups.length,"Meme Group","memes",0));
+        Groups.push(new Group(Groups.length,"Chef Things","Cooking leaflets",0));
         return { Users, Groups, Channels };
     }
-    
+
     data = JSON.parse(data)
     Groups = data.groups;
     Channels = data.channels;
     Users = data.users;
-      
+
     for(var i=0;i<Users.length;i++){
         if(Users[i]._socket !== undefined){
             delete Users[i]._socket;
