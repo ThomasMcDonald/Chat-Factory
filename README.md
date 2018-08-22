@@ -54,3 +54,7 @@ var Channel = function (id, name,topic,groupID,created_at,created_by) {
 module.exports = Channel;
 
 ```
+
+## Client & Server Responsibilites
+
+## Angular Architecture
