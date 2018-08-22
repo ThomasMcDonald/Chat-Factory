@@ -31,7 +31,6 @@ export class DashboardComponent implements OnInit {
       this.Users = data.users;
       this.Channels = data.channels;
       console.log(data);
-      console.log(this.Groups);
     })
     
      this.socket.on("newUser", (data) =>{
@@ -57,7 +56,6 @@ export class DashboardComponent implements OnInit {
   newUserModal(){
     let dialogRef = this.dialog.open(NewUserComponent, {
       width: '600px',
-      data: 'This text is passed into the dialog!'
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)

@@ -12,6 +12,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { NewUserComponent } from './new-user/new-user.component';
+import { RoomComponent } from './room/room.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { NewUserComponent } from './new-user/new-user.component';
     AppComponent,
     LoginComponent,
     DashboardComponent,
-    NewUserComponent
+    NewUserComponent,
+    RoomComponent
   ],
   imports: [
     BrowserModule,

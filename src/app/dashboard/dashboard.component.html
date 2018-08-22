@@ -22,7 +22,7 @@
     <h3 mat-subheader style="color:#CCCADF">Groups</h3>
       <mat-list-item class="group" *ngFor="let group of Groups">
         <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
-        <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
+        <h3 matLine style="color:#CCCADF"><a [routerLink]="['room',group._id]">{{group._name}}</a> </h3>
         <p matLine><span style="color:#CCCADF">hhhhhhh</span></p>
       </mat-list-item>
     
@@ -33,14 +33,7 @@
   
   
   <mat-drawer-content class="content">
-    <mat-toolbar>
-      <span>Room Name</span>
-        <span class="spacer"></span>
-         <button mat-icon-button class="settings-icon"><mat-icon>add_circle</mat-icon></button>
-         <button mat-icon-button class="settings-icon"><mat-icon>settings</mat-icon></button>
-    </mat-toolbar>
-<p>USER ROLE: {{ userDetails._role }}</p>
-
-</mat-drawer-content>
+    <router-outlet ></router-outlet>
+  </mat-drawer-content>
 
 </mat-drawer-container>

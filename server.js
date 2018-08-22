@@ -58,7 +58,6 @@ app.post('/loginVerify', function (req, res) {
 })
 
 app.post('/createUser', function (req, res) { 
-    console.log(req.body)
     for(var i=0;i<Users.length;i++){
         if(Users[i]._username == req.body.username){
               return res.send({statusCode: "UserError", msg: "User Already Exists" })
@@ -69,7 +68,6 @@ app.post('/createUser', function (req, res) {
     io.emit('newUser',{users: Users})
     fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {  
     if (err) throw err;
-    console.log('Server saved!');
 });
 });
 
@@ -86,6 +84,10 @@ app.delete('/removeUser', function (req, res) {
 // Group routes
 app.post('/createGroup', function (req, res) { 
     console.log(req.body)
+});
+
+app.post('/getGroup', function (req, res) { 
+     return res.send({ currentGroup: Groups[req.body.groupID], statusCode: "Success" })
 });
 
 app.put('/updateGroup', function (req, res) { 
