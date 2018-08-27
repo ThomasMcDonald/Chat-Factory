@@ -1,5 +1,9 @@
 # Chat Factory
 
+## Production
+You can view the production release of this web application at:
+https://chat-factory.herokuapp.com/
+
 ## Git Repository
 The purpose of this Git repo is to manage the project, as they change over time. Git stores this information in a data structure called a repository. A git repository contains, among other things, the following: A set of commit objects. A certain points in the development of this solution new branches were created to ensure safe development of different features.
 
