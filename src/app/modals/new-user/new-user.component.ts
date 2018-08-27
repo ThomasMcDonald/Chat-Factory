@@ -28,7 +28,7 @@ export class NewUserComponent implements OnInit {
   }
 
   onCloseConfirm() {
-    this.http.post(this.url+'/createUser', this.newUserForm.value)
+    this.http.post(this.C9URL+'/createUser', this.newUserForm.value)
       .subscribe(
         res => {
           this.dialogRef.close(res);
