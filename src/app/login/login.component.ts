@@ -12,7 +12,8 @@ export class LoginComponent implements OnInit {
   public socket;
   public url = 'http://localhost:8080';
   public C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
-  private prodURL = 'https://chat-factory.herokuapp.com/';
+  private prodURL = 'https://chat-factory.herokuapp.com';
+  
   public userDetails = {
     username: "",
     password: "",

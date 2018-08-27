@@ -15,7 +15,7 @@ import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 export class DashboardComponent implements OnInit {
   private url = 'http://localhost:8080';
   private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
-  private prodURL = 'https://chat-factory.herokuapp.com/';
+  private prodURL = 'https://chat-factory.herokuapp.com';
   
   private socket;
   public userDetails;
