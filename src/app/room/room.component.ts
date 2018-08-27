@@ -20,7 +20,7 @@ export class RoomComponent implements OnInit {
 
   private url = 'http://localhost:8080';
   private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
-
+  private prodURL = 'https://chat-factory.herokuapp.com';
 
 
   constructor(private dataService: DataService,private activatedRoute: ActivatedRoute, private router: Router, public dialog: MatDialog, private http: HttpClient) {
@@ -44,7 +44,7 @@ addToGroup(groupID, userID){
 }
 
 getGroup(id){
-   this.http.post(this.url+'/getGroup', { groupID: id } )
+   this.http.post(this.prodURL+'/getGroup', { groupID: id } )
       .subscribe(
         res => {
           this.currentGroup = res['currentGroup'];

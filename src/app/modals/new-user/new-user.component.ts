@@ -14,7 +14,7 @@ import {ErrorStateMatcher} from '@angular/material/core';
 export class NewUserComponent implements OnInit {
   private url = 'http://localhost:8080';
   private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
-
+  private prodURL = 'https://chat-factory.herokuapp.com';
   newUserForm = this.fb.group({
     email: ['', Validators.required],
     username: ['', Validators.required],
@@ -28,7 +28,7 @@ export class NewUserComponent implements OnInit {
   }
 
   onCloseConfirm() {
-    this.http.post(this.url+'/createUser', this.newUserForm.value)
+    this.http.post(this.prodURL+'/createUser', this.newUserForm.value)
       .subscribe(
         res => {
           this.dialogRef.close(res);
