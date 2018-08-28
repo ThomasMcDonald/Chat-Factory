@@ -13,10 +13,15 @@ import { DataService } from '../services/data.service'
 export class RoomComponent implements OnInit {
 
   currentGroup;
+  selectedChannel = 0;
   groupID;
   paramsSubscribe;
   get Users():any[] {
     return this.dataService.Users;
+  }
+
+  get Channels():any[] {
+    return this.dataService.Channels;
   }
 
   private url = 'http://localhost:8080';
@@ -45,7 +50,7 @@ addToGroup(groupID, userID){
 }
 
 getGroup(id){
-   this.http.post(this.prodURL+'/getGroup', { groupID: id } )
+   this.http.post(this.url+'/getGroup', { groupID: id } )
       .subscribe(
         res => {
           this.currentGroup = res['currentGroup'];

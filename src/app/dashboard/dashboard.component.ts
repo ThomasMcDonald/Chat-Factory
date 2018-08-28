@@ -17,7 +17,7 @@ export class DashboardComponent implements OnInit {
   private url = 'http://localhost:8080';
   private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
   private prodURL = 'https://chat-factory.herokuapp.com';
-  
+
   private socket;
   public userDetails;
   public Groups = [];
@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
   messageValue = "";
 
   constructor(private dataService: DataService,private router: Router, public dialog: MatDialog, private http: HttpClient) {
-    this.socket = io.connect(this.prodURL);
+    this.socket = io.connect(this.url);
     this.getCurrentUser();
     this.socket.emit("loginSetup",this.userDetails._id);
     this.socket.on("loginDetails", (data) =>{
