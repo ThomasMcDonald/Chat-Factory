@@ -1,15 +1,15 @@
 <mat-drawer-container>
-  <mat-drawer mode="side" opened>
+  <mat-drawer mode="side" opened class="groups">
     <button class="menuIcon" mat-icon-button [matMenuTriggerFor]="menu" style="padding:1em;">
         <mat-icon>more_vert</mat-icon>
     </button>
     <mat-divider style="margin:1em;"></mat-divider>
     <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="createGroup()">
+        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="newGroupModal()">
             <mat-icon>create</mat-icon>
             <span>Create Group</span>
         </button>
-        <button mat-menu-item *ngIf="userDetails._role == 'Super'" (click)="newUserModal()">
+        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="newUserModal()">
             <mat-icon>create</mat-icon>
             <span>Create User</span>
         </button>
@@ -19,21 +19,30 @@
         </button>
     </mat-menu>
     <mat-list>
-    <h3 mat-subheader style="color:#CCCADF">Groups</h3>
       <mat-list-item class="group" *ngFor="let group of Groups">
+        <a [routerLink]="['room',group._id]" (click)="selectedGroup = group._id"matTooltip="Info about the action" [matTooltipPosition]="after" >
         <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
-        <h3 matLine style="color:#CCCADF"><a [routerLink]="['room',group._id]">{{group._name}}</a> </h3>
-        <p matLine><span style="color:#CCCADF">hhhhhhh</span></p>
+        <!-- <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
+        <p matLine><span style="color:#CCCADF">{{group._topic}}</span></p>
+      -->
+        </a>
       </mat-list-item>
-    
-       <h3 mat-subheader style="color:#CCCADF">Direct</h3>
-       
     </mat-list>
   </mat-drawer>
-  
-  
-  <mat-drawer-content class="content">
-    <router-outlet ></router-outlet>
+  <mat-drawer-content>
+    <mat-drawer-container>
+      <mat-drawer mode="side" opened class="channels">
+        <mat-list>
+          <mat-list-item class="group" *ngFor="let channel of Channels">
+            <div *ngIf="channel._groupID == selectedGroup">
+              <h3 matLine style="color:#CCCADF">{{channel._name}} </h3>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </mat-drawer>
+      <mat-drawer-content class="content">
+        <router-outlet ></router-outlet>
+      </mat-drawer-content>
+    </mat-drawer-container>
   </mat-drawer-content>
-
 </mat-drawer-container>

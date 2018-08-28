@@ -5,7 +5,7 @@
   src: url('assets/fonts/gravity-book.ttf') format("TrueType");
 }
 
-body{ 
+body{
     margin: 0;
     font-family: Gravity !important;
 }
@@ -16,9 +16,15 @@ body{
 
 
 /* Side nav*/
-mat-drawer {
-    background: linear-gradient(#38307B, #56489B, #7C88ED);
-    width: 300px;
+
+.groups {
+  background: linear-gradient(#38307B, #56489B, #7C88ED);
+    width: 75px;
+}
+
+.channels {
+  background: linear-gradient(#38307B, #56489B, #7C88ED);
+  width: 225px;
 }
 
 mat-drawer-container{
@@ -77,14 +83,14 @@ mat-toolbar {
     text-align: center;
     max-width: 400px;
 }
- 
+
 mat-spinner {
     width: 20px !important;
     height: 20px !important;
     display: inline-block;
     margin-left: 10px;
 }
- 
+
 mat-spinner svg{
     width: 20px !important;
     height: 20px !important;

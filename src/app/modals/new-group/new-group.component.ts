@@ -7,28 +7,30 @@ import {ErrorStateMatcher} from '@angular/material/core';
 
 
 @Component({
-  selector: 'app-new-user',
-  templateUrl: './new-user.component.html',
-  styleUrls: ['./new-user.component.css']
+  selector: 'app-new-group',
+  templateUrl: './new-group.component.html',
+  styleUrls: ['./new-group.component.css']
 })
-export class NewUserComponent implements OnInit {
+export class NewGroupComponent implements OnInit {
   private url = 'http://localhost:8080';
   private C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
 
-  newUserForm = this.fb.group({
-    email: ['', Validators.required],
-    username: ['', Validators.required],
-    role: ['',Validators.required]
+  newGroupForm = this.fb.group({
+    name: ['', Validators.required],
+    topic: ['', Validators.required],
+    owner: ['',Validators.required]
   });
 
 
-  constructor(public dialogRef: MatDialogRef<NewUserComponent>, private fb: FormBuilder, private http: HttpClient) { }
+  constructor(public dialogRef: MatDialogRef<NewGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
+    this.newGroupForm.controls.owner.setValue(this.data.CurrentUser._id);
+  }
 
   ngOnInit() {
   }
 
   onCloseConfirm() {
-    this.http.post(this.url+'/createUser', this.newUserForm.value)
+    this.http.post(this.url+'/createGroup', this.newGroupForm.value)
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){

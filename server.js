@@ -43,7 +43,7 @@ var io = require('socket.io').listen(server);
 app.post('/loginVerify', function (req, res) {
     var realUser = { status: false, id:0 };
     for(var i=0;i<Users.length;i++){
-        if(Users[i]._username == req.body.username){
+        if(Users[i]._username == req.body.username.toLowerCase()){
             realUser.status = true;
             realUser.id = i;
             break;
@@ -57,13 +57,14 @@ app.post('/loginVerify', function (req, res) {
     }
 })
 
+// Create new user function, will throw error if user already exists
 app.post('/createUser', function (req, res) {
     for(var i=0;i<Users.length;i++){
-        if(Users[i]._username == req.body.username){
+        if(Users[i]._username == req.body.username.toLowerCase()){
               return res.send({statusCode: "UserError", msg: "User Already Exists" })
         }
     }
-    Users.push(new User(Users.length,req.body.username,req.body.email,req.body.role));
+    Users.push(new User(Users.length,req.body.username.toLowerCase(),req.body.email,req.body.role));
     res.send({statusCode: "User", msg: "User Created" })
     io.emit('newUser',{users: Users})
     fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
@@ -83,7 +84,13 @@ app.delete('/removeUser', function (req, res) {
 
 // Group routes
 app.post('/createGroup', function (req, res) {
-    console.log(req.body)
+
+  Groups.push(new Group(Groups.length,req.body.name,req.body.topic,req.body._id,[]));
+  res.send({statusCode: "Success", msg: "Group Created" })
+  io.emit('newGroup',{groups: Groups})
+  fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
+  if (err) throw err;
+});
 });
 
 app.post('/getGroup', function (req, res) {
@@ -145,9 +152,10 @@ io.on('connection', function(socket){
 function loadserverCache () {
     var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
     if(data == '') {
-        Users.push(new User(Users.length,"Super","Super@gmail.com","Super"));
-        Groups.push(new Group(Groups.length,"Meme Group","memes",0));
+        Users.push(new User(Users.length,"super","super@gmail.com","Super"));
+        Groups.push(new Group(Groups.length,"Christian Minecraft Server","memes",0));
         Groups.push(new Group(Groups.length,"Chef Things","Cooking leaflets",0));
+        Channels.push(new Channel(Channels.length,"General","General Chat",0,0));
         return { Users, Groups, Channels };
     }
 

@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule }     from './app-routing/app-routing.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSidenavModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatCardModule, MatGridListModule, MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatListModule, MatDialogModule, MatSelectModule } from '@angular/material';
+import { MatSidenavModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatCardModule, MatGridListModule, MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatListModule, MatDialogModule, MatSelectModule, MatTooltipModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 
@@ -18,6 +18,7 @@ import { RoomComponent } from './room/room.component';
 //Modal Dialog
 import { NewUserComponent } from './modals/new-user/new-user.component';
 import { AddToGroupComponent } from './modals/add-to-group/add-to-group.component';
+import { NewGroupComponent } from './modals/new-group/new-group.component';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import { AddToGroupComponent } from './modals/add-to-group/add-to-group.componen
     DashboardComponent,
     NewUserComponent,
     RoomComponent,
-    AddToGroupComponent
+    AddToGroupComponent,
+    NewGroupComponent
   ],
   imports: [
     BrowserModule,
@@ -50,9 +52,10 @@ import { AddToGroupComponent } from './modals/add-to-group/add-to-group.componen
     MatDividerModule,
     MatListModule,
     MatDialogModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule
   ],
-  entryComponents: [NewUserComponent,AddToGroupComponent],
+  entryComponents: [NewUserComponent,AddToGroupComponent,NewGroupComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
