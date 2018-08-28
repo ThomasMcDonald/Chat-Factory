@@ -12,6 +12,8 @@ export class LoginComponent implements OnInit {
   public socket;
   public url = 'http://localhost:8080';
   public C9URL = 'https://node-garbage-thomasmcdonald1996.c9users.io';
+  private prodURL = 'https://chat-factory.herokuapp.com';
+  
   public userDetails = {
     username: "",
     password: "",
@@ -27,7 +29,7 @@ export class LoginComponent implements OnInit {
 
   // Once i get the positve response back I need to save details in local storage
   login(){
-    this.http.post(this.url+'/loginVerify', this.userDetails) // Sending password with no hash ;)
+    this.http.post(this.prodURL+'/loginVerify', this.userDetails) // Sending password with no hash ;)
       .subscribe(
         res => {
           if(res['statusCode'] == "initiateSocket"){

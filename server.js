@@ -40,6 +40,8 @@ var io = require('socket.io').listen(server);
 
 
 // User Routes
+
+// Verify the login details provided with the User Array. There is no actual authentication, just check if username exists in array.
 app.post('/loginVerify', function (req, res) {
     var realUser = { status: false, id:0 };
     for(var i=0;i<Users.length;i++){
@@ -72,17 +74,21 @@ app.post('/createUser', function (req, res) {
 });
 });
 
+// Update User details
 app.put('/updateUser', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
+// Delete given User
 app.delete('/removeUser', function (req, res) {
     console.log(req.body)
     // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
 // Group routes
+
+// Create Group
 app.post('/createGroup', function (req, res) {
 
   Groups.push(new Group(Groups.length,req.body.name,req.body.topic,req.body._id,[]));
@@ -93,34 +99,47 @@ app.post('/createGroup', function (req, res) {
 });
 });
 
+// Get Group by ID
 app.post('/getGroup', function (req, res) {
      return res.send({ currentGroup: Groups[req.body.groupID], statusCode: "Success" })
 });
 
+// Update details of given Group
 app.put('/updateGroup', function (req, res) {
     console.log(req.body)
-    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
+// Remove given Group
 app.delete('/removeGroup', function (req, res) {
     console.log(req.body)
-    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
+});
+
+// Add the Given User to the given Group
+app.post('/addUserToGroup', function(req, res){
+    console.log(req.body); 
+});
+
+// Remove the given user from the given group
+app.post('/removeUserFromGroup', function(req, res){
+    console.log(req.body); 
 });
 
 
 // Channel Routes
+
+// Create Channel
 app.post('/createChannel', function (req, res) {
     console.log(req.body)
 });
 
+// Update give channels details
 app.put('/updateChannel', function (req, res) {
     console.log(req.body)
-    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
+// Remove Given Channel
 app.delete('/removeChannel', function (req, res) {
     console.log(req.body)
-    // Just send the entire User object or ID to this route and it can be used in all update instances, not just role update.
 });
 
 
