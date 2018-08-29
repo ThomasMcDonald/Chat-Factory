@@ -20,7 +20,7 @@
     </mat-menu>
     <mat-list>
       <mat-list-item class="group" *ngFor="let group of Groups">
-        <a [routerLink]="['room',group._id]" (click)="selectedGroup = group._id"matTooltip="Info about the action" [matTooltipPosition]="after" >
+        <a [routerLink]="['room',group._id]" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after" >
         <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
         <!-- <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
         <p matLine><span style="color:#CCCADF">{{group._topic}}</span></p>
