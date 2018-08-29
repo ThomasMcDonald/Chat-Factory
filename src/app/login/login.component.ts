@@ -29,7 +29,7 @@ export class LoginComponent implements OnInit {
 
   // Once i get the positve response back I need to save details in local storage
   login(){
-    this.http.post(this.url+'/loginVerify', this.userDetails) // Sending password with no hash ;)
+    this.http.post(this.C9URL+'/loginVerify', this.userDetails) // Sending password with no hash ;)
       .subscribe(
         res => {
           if(res['statusCode'] == "initiateSocket"){

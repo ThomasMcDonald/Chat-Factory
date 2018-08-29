@@ -50,7 +50,7 @@ addToGroup(groupID, userID){
 }
 
 getGroup(id){
-   this.http.post(this.url+'/getGroup', { groupID: id } )
+   this.http.post(this.C9URL+'/getGroup', { groupID: id } )
       .subscribe(
         res => {
           this.currentGroup = res['currentGroup'];

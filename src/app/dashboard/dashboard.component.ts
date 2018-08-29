@@ -27,7 +27,7 @@ export class DashboardComponent implements OnInit {
   messageValue = "";
 
   constructor(private dataService: DataService,private router: Router, public dialog: MatDialog, private http: HttpClient) {
-    this.socket = io.connect(this.url);
+    this.socket = io.connect(this.C9URL);
     this.getCurrentUser();
     this.socket.emit("loginSetup",this.userDetails._id);
     this.socket.on("loginDetails", (data) =>{
@@ -80,5 +80,17 @@ export class DashboardComponent implements OnInit {
   getCurrentUser(): void {
   this.dataService.getCurrentUser()
       .subscribe(currentUser => this.userDetails = currentUser);
+}
+
+ groupAcronym(s){
+    var words, acronym, nextWord;
+
+    words = s.split(' ');
+    acronym = "";
+    for(var i=0;i<2;i++) {
+            nextWord = words[i];
+            acronym = acronym + nextWord.charAt(0);
+    }
+    return acronym
 }
 }
