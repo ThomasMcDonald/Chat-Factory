@@ -1,6 +1,11 @@
 <div class="slack">
   <nav class="teams">
     <ul class="teams__list" >
+      <li class="teams__itemNew">
+        <button class="teams__New" (click)="newGroupModal()">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </li>
       <li class="teams__item" *ngFor="let group of Groups">
         <button class="teams__button"  [routerLink]="['group',group._id]" routerLinkActive="teams__button--active" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after">
           {{ groupAcronym(group._name) }}
@@ -11,7 +16,7 @@
   <div class="sidebar">
     <button class="team-menu">
       <div class="team-menu__info">
-        <h1 class="team-menu__name">{{Groups[selectedGroup]._name}}</h1>
+        <h1 class="team-menu__name" *ngIf="Groups != []">{{Groups[selectedGroup]._name}}</h1>
         <div class="team-menu__status">
           <span class="team-menu__username">{{userDetails._username}}</span>
         </div>

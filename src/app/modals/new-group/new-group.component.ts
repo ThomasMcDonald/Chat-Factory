@@ -30,7 +30,7 @@ export class NewGroupComponent implements OnInit {
   }
 
   onCloseConfirm() {
-    this.http.post(this.url+'/createGroup', this.newGroupForm.value)
+    this.http.post(this.C9URL+'/createGroup', this.newGroupForm.value)
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){

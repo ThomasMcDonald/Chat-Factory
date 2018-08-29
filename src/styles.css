@@ -133,9 +133,42 @@ button:focus, button:hover, button:active {
   color: #fff;
   text-align: center;
 }
+.teams__itemNew {
+  font-size: 0.8rem;
+  color: #fff;
+  text-align: center;
+}
+
 .teams__item:after {
   content: "⌘" counter(team-counter);
 }
+
+.teams__New {
+  transition: all 0.3s ease;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1.4rem 0 0.5rem;
+  width: 40px;
+  height: 40px;
+  border: 1px dashed #535559;
+  background: none;
+  text-decoration: none;
+  border-radius: 5px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 20px;
+  font-weight: 700;
+  
+}
+
+.teams__New:hover {
+    border: 1px dashed white;
+    color: white;
+    border-radius: 30%;
+}
+
 .teams__button {
   position: relative;
   display: flex;
