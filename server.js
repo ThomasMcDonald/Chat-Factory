@@ -52,7 +52,7 @@ app.post('/loginVerify', function (req, res) {
         }
     }
     if(!realUser.status){
-        return res.send({statusCode: "UserError", msg: "User doesnt Exist" })
+        return res.send({statusCode: "Error", msg: "User doesnt Exist" })
     }
     else{
       return res.send({ user: Users[realUser.id], statusCode: "initiateSocket" })

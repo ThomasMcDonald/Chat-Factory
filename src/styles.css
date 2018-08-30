@@ -393,8 +393,6 @@ button:focus, button:hover, button:active {
   overflow-y: scroll;
 }
 .main__container {
-  padding: 2rem;
-  margin: 0 auto;
   width: 55%;
   max-width: 860px;
   min-width: 800px;
@@ -559,4 +557,14 @@ button:focus, button:hover, button:active {
 }
 .radio__img--monument {
   background-image: url("https://s3-us-west-2.amazonaws.com/s.cdpn.io/60485/monument.png");
+}
+
+
+
+
+/*Room*/
+.placeholder{
+    background-image: url(https://a.slack-edge.com/f7028/img/loading_channel_pane.png);
+    background-repeat: no-repeat;
+    background-position: top center;
 }

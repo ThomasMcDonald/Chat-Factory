@@ -16,7 +16,13 @@ const routes: Routes = [
             },
             {
                 path:'group/:id',
-                component: RoomComponent
+                component: RoomComponent,
+                children: [
+                  {
+                    path:'channel/:channelID',
+                    component: RoomComponent,
+                  },
+                  ]
             }
           ]
   }

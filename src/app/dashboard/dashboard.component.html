@@ -13,10 +13,10 @@
       </li>
     </ul>
   </nav>
-  <div class="sidebar">
-    <button class="team-menu">
+  <div class="sidebar"> 
+    <button class="team-menu" [matMenuTriggerFor]="appMenu">
       <div class="team-menu__info">
-        <h1 class="team-menu__name" *ngIf="Groups != []">{{Groups[selectedGroup]._name}}</h1>
+        <h1 class="team-menu__name" *ngIf="hasProp(Groups[selectedGroup])">{{Groups[selectedGroup]._name}}</h1>
         <div class="team-menu__status">
           <span class="team-menu__username">{{userDetails._username}}</span>
         </div>
@@ -30,7 +30,7 @@
       </h2>
       <ul class="channels__list"  *ngFor="let channel of Channels">
         <li class="channels__item"  *ngIf="channel._groupID == selectedGroup">
-          <button class="channels__button"><span>{{channel._name}}</span></button>
+          <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',0]"><span>{{channel._name}}</span></button>
         </li>
       </ul>
     </div>
@@ -48,4 +48,13 @@
       </div>
     </div>
   </div>
+  
+  
+  <mat-menu #appMenu="matMenu">
+  <button mat-menu-item (click)="newUserModal()">Create User</button>
+  <button mat-menu-item (click)="logout()">Logout</button>
+  
+</mat-menu>
+
+
 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { Inject } from '@angular/core';
-import { DataService } from '../../services/data.service';
+import { DataService } from '../../services/data/data.service';
 
 @Component({
   selector: 'app-add-to-group',

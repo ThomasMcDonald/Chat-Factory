@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 
 import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators, FormBuilder} from '@angular/forms';
 import {ErrorStateMatcher} from '@angular/material/core';
-import { DataService } from '../../services/data.service'
+import { DataService } from '../../services/data/data.service'
 
 @Component({
   selector: 'app-new-user',

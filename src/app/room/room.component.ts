@@ -3,7 +3,7 @@ import {Router, ActivatedRoute, Params} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { AddToGroupComponent } from '../modals/add-to-group/add-to-group.component'
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import { DataService } from '../services/data.service'
+import { DataService } from '../services/data/data.service'
 
 @Component({
   selector: 'app-room',
@@ -15,6 +15,7 @@ export class RoomComponent implements OnInit {
   currentGroup;
   selectedChannel = 0;
   groupID;
+  channelID;
   paramsSubscribe;
   get Users():any[] {
     return this.dataService.Users;
@@ -27,6 +28,9 @@ export class RoomComponent implements OnInit {
 
   constructor(private dataService: DataService,private activatedRoute: ActivatedRoute, private router: Router, public dialog: MatDialog, private http: HttpClient) {
    this.paramsSubscribe=this.activatedRoute.params.subscribe(params => {
+      if(params['channelID']){
+        this.channelID = params['channelID']
+      }
       this.groupID = params['id'];
       this.getGroup(this.groupID);
     });

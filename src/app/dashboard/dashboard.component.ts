@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import io from "socket.io-client";
-import { DataService } from '../services/data.service'
+import { DataService } from '../services/data/data.service'
 import { NewUserComponent } from '../modals/new-user/new-user.component';
 import { NewGroupComponent } from '../modals/new-group/new-group.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
@@ -92,5 +92,9 @@ export class DashboardComponent implements OnInit {
             acronym = acronym + nextWord.charAt(0);
     }
     return acronym
+}
+
+hasProp(o) {
+  return !(o == undefined);
 }
 }

@@ -5,16 +5,17 @@
   <mat-grid-tile colspan="2" rowspan="3">
     <mat-card class="mat-typography login">
       <h1>Login</h1>
-      <form (ngSubmit)="login()">
+      <form [formGroup]="userDetails" (ngSubmit)="login()">
         <mat-form-field class="full-width">
-           <input matInput  type="text" name="username" autocomplete="off" [(ngModel)]="userDetails.username" placeholder="username"/>
+           <input matInput  type="text" name="username" autocomplete="off" formControlName="username" placeholder="username"/>
         </mat-form-field>
         <br>
         <mat-form-field class="full-width">
-           <input matInput type="password" name="password" [(ngModel)]="userDetails.password" placeholder="password"/>
+           <input matInput type="password" name="password" formControlName="password" placeholder="password"/>
         </mat-form-field>
         <br>
-        <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner">Login
+        <div *ngIf="userDetails.controls.username.errors">{{userDetails.controls.username.errors | json }}</div>
+        <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner" [disabled]="userDetails.invalid">Login
           <mat-spinner color="accent" mode="indeterminate" *ngIf="showSpinner"></mat-spinner>
         </button>
       </form>
