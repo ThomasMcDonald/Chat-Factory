@@ -1,48 +1,51 @@
-<mat-drawer-container>
-  <mat-drawer mode="side" opened class="groups">
-    <button class="menuIcon" mat-icon-button [matMenuTriggerFor]="menu" style="padding:1em;">
-        <mat-icon>more_vert</mat-icon>
+<div class="slack">
+  <nav class="teams">
+    <ul class="teams__list" >
+      <li class="teams__itemNew">
+        <button class="teams__New" (click)="newGroupModal()">
+          <mat-icon>add_circle_outline</mat-icon>
+        </button>
+      </li>
+      <li class="teams__item" *ngFor="let group of Groups">
+        <button class="teams__button"  [routerLink]="['group',group._id]" routerLinkActive="teams__button--active" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after">
+          {{ groupAcronym(group._name) }}
+        </button>
+      </li>
+    </ul>
+  </nav>
+  <div class="sidebar">
+    <button class="team-menu">
+      <div class="team-menu__info">
+        <h1 class="team-menu__name" *ngIf="Groups != []">{{Groups[selectedGroup]._name}}</h1>
+        <div class="team-menu__status">
+          <span class="team-menu__username">{{userDetails._username}}</span>
+        </div>
+      </div>
     </button>
-    <mat-divider style="margin:1em;"></mat-divider>
-    <mat-menu #menu="matMenu">
-        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="newGroupModal()">
-            <mat-icon>create</mat-icon>
-            <span>Create Group</span>
-        </button>
-        <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="newUserModal()">
-            <mat-icon>create</mat-icon>
-            <span>Create User</span>
-        </button>
-        <button mat-menu-item (click)="logout()">
-            <mat-icon>exit_to_app</mat-icon>
-            <span>Logout</span>
-        </button>
-    </mat-menu>
-    <mat-list>
-      <mat-list-item class="group" *ngFor="let group of Groups">
-        <a [routerLink]="['room',group._id]" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after" >
-        <img matListAvatar src="https://qcns.com.au/wp-content/uploads/2018/05/IMG_0006-625x938.jpg" alt="Fareth Gorbes">
-        <!-- <h3 matLine style="color:#CCCADF">{{group._name}} </h3>
-        <p matLine><span style="color:#CCCADF">{{group._topic}}</span></p>
-      -->
-        </a>
-      </mat-list-item>
-    </mat-list>
-  </mat-drawer>
-  <mat-drawer-content>
-    <mat-drawer-container>
-      <mat-drawer mode="side" opened class="channels">
-        <mat-list>
-          <mat-list-item class="group" *ngFor="let channel of Channels">
-            <div *ngIf="channel._groupID == selectedGroup">
-              <h3 matLine style="color:#CCCADF">{{channel._name}} </h3>
-            </div>
-          </mat-list-item>
-        </mat-list>
-      </mat-drawer>
-      <mat-drawer-content class="content">
-        <router-outlet ></router-outlet>
-      </mat-drawer-content>
-    </mat-drawer-container>
-  </mat-drawer-content>
-</mat-drawer-container>
+    <div class="channels">
+      <h2 class="channels__heading">
+        <span>Channels <span class="channels__number"></span>
+        </span>
+        <button class="channels__add"><mat-icon>add_circle_outline</mat-icon></button>
+      </h2>
+      <ul class="channels__list"  *ngFor="let channel of Channels">
+        <li class="channels__item"  *ngIf="channel._groupID == selectedGroup">
+          <button class="channels__button"><span>{{channel._name}}</span></button>
+        </li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="main">
+    <header class="main__header">
+      <h1 class="main__h1">Your preferences for Dumbledore's Army</h1>
+      <button class="ion-android-close"><mat-icon>add_circle_outline</mat-icon></button>
+      <button class="ion-android-close"><mat-icon>add_circle_outline</mat-icon></button>
+    </header>
+    <div class="main__content">
+      <div class="main__container">
+      	<router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</div>

@@ -81,4 +81,16 @@ export class DashboardComponent implements OnInit {
   this.dataService.getCurrentUser()
       .subscribe(currentUser => this.userDetails = currentUser);
 }
+
+ groupAcronym(s){
+    var words, acronym, nextWord;
+
+    words = s.split(' ');
+    acronym = "";
+    for(var i=0;i<2;i++) {
+            nextWord = words[i];
+            acronym = acronym + nextWord.charAt(0);
+    }
+    return acronym
+}
 }

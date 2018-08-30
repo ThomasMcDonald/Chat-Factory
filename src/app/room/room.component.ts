@@ -13,6 +13,7 @@ import { DataService } from '../services/data.service'
 export class RoomComponent implements OnInit {
 
   currentGroup;
+  selectedChannel = 0;
   groupID;
   paramsSubscribe;
   get Users():any[] {
