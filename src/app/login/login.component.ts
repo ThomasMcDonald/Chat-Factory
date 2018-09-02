@@ -4,13 +4,14 @@ import { Router } from '@angular/router';
 import io from "socket.io-client";
 import { DataService } from '../services/data/data.service'
 import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators, FormBuilder} from '@angular/forms';
+import {MatSnackBar} from '@angular/material';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  
+
   showSpinner = false;
   userDetails: FormGroup;
   get url():String {
@@ -18,13 +19,13 @@ export class LoginComponent implements OnInit {
   }
 
 
-  constructor(private dataService: DataService, private http: HttpClient,private router: Router, private fb: FormBuilder) {
-    
+  constructor(private dataService: DataService, private http: HttpClient,private router: Router, private fb: FormBuilder, public snackBar: MatSnackBar) {
+
    this.userDetails = fb.group({
       username: ["", this.validateName],
       password: "",
     });
-    
+
    }
 
   ngOnInit() {
@@ -52,8 +53,9 @@ export class LoginComponent implements OnInit {
           else if(res['statusCode'] == "Error"){
             this.showSpinner = false;
             this.userDetails.controls['username'].setErrors({'incorrect': true});
-            console.log("User Doesnt Exist")
-            this.router.navigate(['/login']);
+            this.snackBar.open(res['msg'], "", {
+              duration: 2000,
+            });
           }
         },
         err => {

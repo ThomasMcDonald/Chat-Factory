@@ -6,33 +6,40 @@ import {FormControl, FormGroup, FormGroupDirective, NgForm, Validators, FormBuil
 import {ErrorStateMatcher} from '@angular/material/core';
 import { DataService } from '../../services/data/data.service'
 
+
 @Component({
-  selector: 'app-new-group',
-  templateUrl: './new-group.component.html',
-  styleUrls: ['./new-group.component.css']
+  selector: 'app-add-to-channel',
+  templateUrl: './add-to-channel.component.html',
+  styleUrls: ['./add-to-channel.component.css']
 })
-export class NewGroupComponent implements OnInit {
-  newGroupForm: FormGroup;
+export class AddToChannelComponent implements OnInit {
+
+  addUser;
+  channelID;
+  option;
+  userDetails;
   get url():String {
     return this.dataService.url;
   }
 
-
-  constructor(private dataService: DataService,public dialogRef: MatDialogRef<NewGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
-
-   this.newGroupForm = fb.group({
-    name: ['', Validators.required],
-    topic: ['', Validators.required],
-    owner: [this.data.CurrentUser._id,Validators.required]
-  });
-
+  get Users():any[]{
+    return this.dataService.Users;
   }
+
+
+  constructor(private dataService: DataService,public dialogRef: MatDialogRef<AddToChannelComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
+  this.channelID = this.data.channelID;
+  this.option = this.data.option;
+  this.userDetails = this.data.userDetails;
+  console.log(this.userDetails);
+}
 
   ngOnInit() {
-  }
 
-  onCloseConfirm() {
-    this.http.post(this.url+'/createGroup', this.newGroupForm.value)
+  }
+  onCloseConfirm(){
+    console.log(this.addUser);
+    this.http.post(this.url+'/addUsertoGroupChannel', {option: this.option, channelID:this.channelID, userID: this.addUser})
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){
@@ -49,9 +56,4 @@ export class NewGroupComponent implements OnInit {
         }
       );
   }
-
-  onCloseCancel() {
-    this.dialogRef.close("cancel");
-  }
-
 }

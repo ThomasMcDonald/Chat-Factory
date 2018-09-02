@@ -6,7 +6,10 @@ import { DataService } from '../services/data/data.service'
 import { NewUserComponent } from '../modals/new-user/new-user.component';
 import { NewGroupComponent } from '../modals/new-group/new-group.component';
 import { NewChannelComponent } from '../modals/new-channel/new-channel.component';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
+import { AddToChannelComponent } from '../modals/add-to-channel/add-to-channel.component';
+import { RemoveUserGroupChannelComponent } from '../modals/remove-user-group-channel/remove-user-group-channel.component';
+import { DeleteUserComponent } from '../modals/delete-user/delete-user.component';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar} from '@angular/material';
 
 
 @Component({
@@ -27,18 +30,16 @@ export class DashboardComponent implements OnInit {
   public selectedGroup = 0;
   public selectedChannel = 0;
 
-  constructor(private dataService: DataService,private router: Router, public dialog: MatDialog, private http: HttpClient) {
+  constructor(private dataService: DataService,private router: Router, public dialog: MatDialog, private http: HttpClient, public snackBar: MatSnackBar) {
     this.socket = io.connect(this.url);
     this.getCurrentUser();
     this.socket.emit("loginSetup",this.userDetails._id);
-
     this.socket.on("loginDetails", (data) =>{
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
       this.dataService.Channels = this.Channels = data.channels;
     })
     this.socket.on("newData", (data) => {
-      console.log("new data requested")
       this.socket.emit("requestData",this.userDetails._id);
     })
 
@@ -63,7 +64,7 @@ export class DashboardComponent implements OnInit {
 
 // Logs the user out and removes the local storage containing the user details
   logout(){
-    localStorage.removeItem('userDetails');
+    this.dataService.removeCurrentUserStorage();
     this.socket.disconnect();
     this.router.navigate(['/login']);
   }
@@ -75,6 +76,19 @@ export class DashboardComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
+    });
+  }
+
+
+  deleteUser(){
+    let dialogRef = this.dialog.open(DeleteUserComponent, {
+      width: '600px',
+      data: {userDetails: this.userDetails}
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      this.snackBar.open("User Deleted", "", {
+        duration: 2000,
+      });
     });
   }
 
@@ -91,7 +105,7 @@ export class DashboardComponent implements OnInit {
   }
 
 // Opens the Modal to create a new channel in a group
-  newChannelModal(){
+  newChannelModal() {
     let dialogRef = this.dialog.open(NewChannelComponent, {
       width: '600px',
       data: { CurrentUser: this.userDetails, selectedGroup: this.selectedGroup }
@@ -107,6 +121,74 @@ export class DashboardComponent implements OnInit {
       .subscribe(currentUser => this.userDetails = currentUser);
 }
 
+// HTTP request to remove the requested channel
+removeChannel(id){
+  this.http.post(this.url+'/removeChannel', { channelID: id } )
+     .subscribe(
+       res => {
+         if(res['statusCode'] == "Success"){
+           this.snackBar.open(res['msg'], "", {
+             duration: 2000,
+           });
+         }
+       },
+       err => {
+         this.snackBar.open("HTTP Error", "", {
+           duration: 2000,
+         });
+       }
+     );
+}
+
+// HTTP request to remove the requested group
+deleteGroup(id){
+  this.http.post(this.url+'/removeGroup', { _groupID: id } )
+     .subscribe(
+       res => {
+         if(res['statusCode'] == "Success"){
+         this.snackBar.open("Group Deleted", "", {
+           duration: 2000,
+         });
+       }
+       },
+       err => {
+         this.snackBar.open("ERROR: Connection Issue", "", {
+           duration: 2000,
+         });
+       }
+     );
+}
+
+inviteToGroupChannel(option,id){
+  let dialogRef = this.dialog.open(AddToChannelComponent, {
+    width: '600px',
+    data: {option: option , channelID: id, userDetails: this.userDetails}
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    console.log(result)
+  });
+}
+
+relaventChannel(){
+  var relChannels = [];
+  if(this.Channels == undefined)return 0;
+
+  for(var i = 0;i<this.Channels.length;i++){
+    if(this.Channels[i]._groupID == this.selectedGroup){
+      relChannels.push(this.Channels[i]);
+    }
+  }
+  relChannels = relChannels.sort();
+  for(var i = 0;i<relChannels.length;i++){
+    if(relChannels[i]._id == this.selectedChannel){
+      return relChannels[i]._id;
+    }
+  }
+
+  return 0;
+}
+
+
 // This function gets the first letter of the first and second word
 // Creates an acronym for display
  groupAcronym(s){
@@ -120,33 +202,6 @@ export class DashboardComponent implements OnInit {
             if(words.length == 1){break;}
     }
     return acronym
-}
-
-// HTTP request to remove the requested channel
-removeChannel(id){
-  this.http.post(this.url+'/removeChannel', { channelID: id } )
-     .subscribe(
-       res => {
-         console.log("removed Channel");
-       },
-       err => {
-         console.log("Error occured");
-       }
-     );
-}
-
-// HTTP request to remove the requested group
-deleteGroup(id){
-  this.http.post(this.url+'/removeGroup', { _groupID: id } )
-     .subscribe(
-       res => {
-         this.router.navigate(['group',this.Groups.length,'channel']);
-         console.log("removed Channel");
-       },
-       err => {
-         console.log("Error occured");
-       }
-     );
 }
 
 // Essentially this funciton is being used to see if the Group function has finished its init

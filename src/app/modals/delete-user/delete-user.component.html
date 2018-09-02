@@ -1,0 +1,15 @@
+<div>
+    <h2 mat-dialog-title>Delete User</h2>
+     <form (ngSubmit)="onCloseConfirm()">
+    <mat-dialog-content class="mat-typography login">
+      <mat-radio-group [(ngModel)]="removeUser" name="removeUser" *ngFor="let user of Users">
+        <mat-radio-button  [value]="user._id">{{user._username}}</mat-radio-button><br>
+      </mat-radio-group>
+    </mat-dialog-content>
+  <mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner">Delete
+        <mat-spinner color="accent" mode="indeterminate" *ngIf="showSpinner"></mat-spinner>
+    </button>
+  </mat-dialog-actions>
+  </form>
+</div>

@@ -15,6 +15,8 @@ export class NewUserComponent implements OnInit {
   get url():String {
     return this.dataService.url;
   }
+  errorMsg;
+  showSpinner;
   newUserForm = this.fb.group({
     email: ['', Validators.required],
     username: ['', Validators.required],
@@ -28,13 +30,15 @@ export class NewUserComponent implements OnInit {
   }
 
   onCloseConfirm() {
+    this.errorMsg = "";
     this.http.post(this.url+'/createUser', this.newUserForm.value)
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){
             console.log(res['msg'])
-            //Throw error message for duplicate user here
-            //Probably in a text popup
+            this.showSpinner = false;
+            this.newUserForm.controls['username'].setErrors({'Exists': "User Already Exists'"});
+            this.errorMsg = res['msg'];
           }
           else{
             this.dialogRef.close(res);

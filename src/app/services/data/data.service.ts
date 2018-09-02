@@ -21,4 +21,8 @@ export class DataService {
   getCurrentUser(): Observable<any[]> {
     return of(this.currentUser = JSON.parse(localStorage.getItem('UserDetails')));
   }
+
+  removeCurrentUserStorage(){
+    localStorage.removeItem('userDetails');
+  }
 }

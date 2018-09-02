@@ -1,7 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { AddToGroupComponent } from '../modals/add-to-group/add-to-group.component'
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { DataService } from '../services/data/data.service'
 
@@ -58,18 +57,5 @@ getGroup(id){
         }
       );
 }
-
-
-// Open add to group modal
-openAddToGroup(){
-  let dialogRef = this.dialog.open(AddToGroupComponent, {
-    width: '600px',
-    data: { Users: this.Users },
-  });
-  dialogRef.afterClosed().subscribe(result => {
-    console.log(result)
-  });
-}
-
 
 }

@@ -14,7 +14,6 @@
            <input matInput type="password" name="password" formControlName="password" placeholder="password"/>
         </mat-form-field>
         <br>
-        <div *ngIf="userDetails.controls.username.errors">{{userDetails.controls.username.errors | json }}</div>
         <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner" [disabled]="userDetails.invalid">Login
           <mat-spinner color="accent" mode="indeterminate" *ngIf="showSpinner"></mat-spinner>
         </button>
@@ -22,4 +21,3 @@
     </mat-card>
   </mat-grid-tile>
 </mat-grid-list>
- 
