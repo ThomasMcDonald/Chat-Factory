@@ -4,7 +4,7 @@ var Channel = function (id, name,topic,groupID,created_at,created_by) {
     this._topic = topic;
     this._groupID = groupID;
     //this._createdAt = created_at;
-    this._createdBy = created_by;
+    //this._createdBy = created_by;
 };
 
 

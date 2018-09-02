@@ -28,9 +28,7 @@ export class RoomComponent implements OnInit {
 
   constructor(private dataService: DataService,private activatedRoute: ActivatedRoute, private router: Router, public dialog: MatDialog, private http: HttpClient) {
    this.paramsSubscribe=this.activatedRoute.params.subscribe(params => {
-      if(params['channelID']){
-        this.channelID = params['channelID']
-      }
+      this.channelID = params['channelID'];
       this.groupID = params['id'];
       this.getGroup(this.groupID);
     });
@@ -60,6 +58,7 @@ getGroup(id){
         }
       );
 }
+
 
 // Open add to group modal
 openAddToGroup(){

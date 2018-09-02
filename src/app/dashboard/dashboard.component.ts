@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import { DataService } from '../services/data/data.service'
 import { NewUserComponent } from '../modals/new-user/new-user.component';
 import { NewGroupComponent } from '../modals/new-group/new-group.component';
+import { NewChannelComponent } from '../modals/new-channel/new-channel.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 
 
@@ -17,20 +18,34 @@ export class DashboardComponent implements OnInit {
   get url():String {
     return this.dataService.url;
   }
-  
+
   private socket;
   public userDetails;
   public Groups = [];
   public Channels = [];
   public Users = [];
   public selectedGroup = 0;
-  messageValue = "";
+  public selectedChannel = 0;
 
   constructor(private dataService: DataService,private router: Router, public dialog: MatDialog, private http: HttpClient) {
     this.socket = io.connect(this.url);
     this.getCurrentUser();
     this.socket.emit("loginSetup",this.userDetails._id);
+
     this.socket.on("loginDetails", (data) =>{
+      this.dataService.Groups = this.Groups = data.groups;
+      this.dataService.Users = this.Users = data.users;
+      this.dataService.Channels = this.Channels = data.channels;
+    })
+    this.socket.on("newData", (data) => {
+      console.log("new data requested")
+      this.socket.emit("requestData",this.userDetails._id);
+    })
+
+
+    this.socket.on("updatedData", (data) =>{
+      console.log("Updated Data")
+      console.log(data);
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
       this.dataService.Channels = this.Channels = data.channels;
@@ -40,24 +55,20 @@ export class DashboardComponent implements OnInit {
       this.dataService.Users = this.Users = data.users; // This is all the Data I sent from the server (Groups, Channels and Users)
       console.log(this.Users);
     })
-
-    this.socket.on("newGroup",(data) =>{
-      this.dataService.Groups = this.Groups = data.groups; // This is all the Data I sent from the server (Groups, Channels and Users)
-      console.log(this.Groups);
-    });
   }
 
   ngOnInit() {
 
   }
 
+// Logs the user out and removes the local storage containing the user details
   logout(){
     localStorage.removeItem('userDetails');
     this.socket.disconnect();
     this.router.navigate(['/login']);
   }
 
-
+// Opens the Modal to create a new user
   newUserModal(){
     let dialogRef = this.dialog.open(NewUserComponent, {
       width: '600px',
@@ -67,6 +78,7 @@ export class DashboardComponent implements OnInit {
     });
   }
 
+// Opens the Modal to create a new group
   newGroupModal(){
     let dialogRef = this.dialog.open(NewGroupComponent, {
       width: '600px',
@@ -74,14 +86,29 @@ export class DashboardComponent implements OnInit {
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)
+    //  this.dataService.Groups = this.Groups = result.groups;
     });
   }
 
+// Opens the Modal to create a new channel in a group
+  newChannelModal(){
+    let dialogRef = this.dialog.open(NewChannelComponent, {
+      width: '600px',
+      data: { CurrentUser: this.userDetails, selectedGroup: this.selectedGroup }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      console.log(result)
+    });
+  }
+
+// Observable to keep track of the current user.
   getCurrentUser(): void {
   this.dataService.getCurrentUser()
       .subscribe(currentUser => this.userDetails = currentUser);
 }
 
+// This function gets the first letter of the first and second word
+// Creates an acronym for display
  groupAcronym(s){
     var words, acronym, nextWord;
 
@@ -90,10 +117,39 @@ export class DashboardComponent implements OnInit {
     for(var i=0;i<2;i++) {
             nextWord = words[i];
             acronym = acronym + nextWord.charAt(0);
+            if(words.length == 1){break;}
     }
     return acronym
 }
 
+// HTTP request to remove the requested channel
+removeChannel(id){
+  this.http.post(this.url+'/removeChannel', { channelID: id } )
+     .subscribe(
+       res => {
+         console.log("removed Channel");
+       },
+       err => {
+         console.log("Error occured");
+       }
+     );
+}
+
+// HTTP request to remove the requested group
+deleteGroup(id){
+  this.http.post(this.url+'/removeGroup', { _groupID: id } )
+     .subscribe(
+       res => {
+         this.router.navigate(['group',this.Groups.length,'channel']);
+         console.log("removed Channel");
+       },
+       err => {
+         console.log("Error occured");
+       }
+     );
+}
+
+// Essentially this funciton is being used to see if the Group function has finished its init
 hasProp(o) {
   return !(o == undefined);
 }

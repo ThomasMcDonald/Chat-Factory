@@ -19,6 +19,7 @@ import { RoomComponent } from './room/room.component';
 import { NewUserComponent } from './modals/new-user/new-user.component';
 import { AddToGroupComponent } from './modals/add-to-group/add-to-group.component';
 import { NewGroupComponent } from './modals/new-group/new-group.component';
+import { NewChannelComponent } from './modals/new-channel/new-channel.component';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { NewGroupComponent } from './modals/new-group/new-group.component';
     NewUserComponent,
     RoomComponent,
     AddToGroupComponent,
-    NewGroupComponent
+    NewGroupComponent,
+    NewChannelComponent
   ],
   imports: [
     BrowserModule,
@@ -55,7 +57,7 @@ import { NewGroupComponent } from './modals/new-group/new-group.component';
     MatSelectModule,
     MatTooltipModule
   ],
-  entryComponents: [NewUserComponent,AddToGroupComponent,NewGroupComponent],
+  entryComponents: [NewUserComponent,AddToGroupComponent,NewGroupComponent, NewChannelComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

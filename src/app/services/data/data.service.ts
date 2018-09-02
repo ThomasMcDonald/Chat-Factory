@@ -9,12 +9,12 @@ export class DataService {
   public Channels: any[];
   public Users: any[];
   public currentUser;
-  
-  // Change URL depending on which environment is being used 
- // public url = 'http://localhost:8080'; // Local
-  public url = 'https://node-garbage-thomasmcdonald1996.c9users.io'; // Cloud9
+
+  // Change URL depending on which environment is being used
+  public url = 'http://localhost:8080'; // Local
+ //public url = 'https://node-garbage-thomasmcdonald1996.c9users.io'; // Cloud9
  // private url = 'https://chat-factory.herokuapp.com'; // "Production"
-  
+
   constructor() {
    }
 

@@ -7,14 +7,14 @@
         </button>
       </li>
       <li class="teams__item" *ngFor="let group of Groups">
-        <button class="teams__button"  [routerLink]="['group',group._id]" routerLinkActive="teams__button--active" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after">
+        <button class="teams__button"  [routerLink]="['group',group._id,'channel',0]" routerLinkActive="teams__button--active" (click)="selectedGroup = group._id" [matTooltip]="group._name" matTooltipPosition="after">
           {{ groupAcronym(group._name) }}
         </button>
       </li>
     </ul>
   </nav>
-  <div class="sidebar"> 
-    <button class="team-menu" [matMenuTriggerFor]="appMenu">
+  <div class="sidebar" style="overflow-y: auto;">
+    <button class="team-menu" [matMenuTriggerFor]="mainMenu">
       <div class="team-menu__info">
         <h1 class="team-menu__name" *ngIf="hasProp(Groups[selectedGroup])">{{Groups[selectedGroup]._name}}</h1>
         <div class="team-menu__status">
@@ -26,21 +26,21 @@
       <h2 class="channels__heading">
         <span>Channels <span class="channels__number"></span>
         </span>
-        <button class="channels__add"><mat-icon>add_circle_outline</mat-icon></button>
+        <button class="channels__add" (click)="newChannelModal()"><mat-icon>add_circle_outline</mat-icon></button>
       </h2>
       <ul class="channels__list"  *ngFor="let channel of Channels">
         <li class="channels__item"  *ngIf="channel._groupID == selectedGroup">
-          <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',0]"><span>{{channel._name}}</span></button>
+          <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',channel._id]" (click)="selectedChannel = channel._id"><span>{{channel._name}}</span></button>
         </li>
       </ul>
     </div>
   </div>
-  
+
   <div class="main">
     <header class="main__header">
-      <h1 class="main__h1">Your preferences for Dumbledore's Army</h1>
-      <button class="ion-android-close"><mat-icon>add_circle_outline</mat-icon></button>
-      <button class="ion-android-close"><mat-icon>add_circle_outline</mat-icon></button>
+      <h1 class="main__h1" *ngIf="hasProp(Groups[selectedGroup])">#{{Channels[selectedChannel]._name}}</h1>
+      <button class="ion-android-close" (click)="removeChannel(selectedChannel)"><mat-icon>add_circle_outline</mat-icon></button>
+      <button class="ion-android-close" [matMenuTriggerFor]="channelMenu"><mat-icon>settings</mat-icon></button>
     </header>
     <div class="main__content">
       <div class="main__container">
@@ -48,13 +48,17 @@
       </div>
     </div>
   </div>
-  
-  
-  <mat-menu #appMenu="matMenu">
-  <button mat-menu-item (click)="newUserModal()">Create User</button>
-  <button mat-menu-item (click)="logout()">Logout</button>
-  
-</mat-menu>
+
+
+  <mat-menu #mainMenu="matMenu">
+    <button mat-menu-item (click)="newUserModal()">Create User</button>
+    <button mat-menu-item (click)="logout()">Logout</button>
+    <button mat-menu-item (click)="deleteGroup(selectedGroup)">Delete Group</button>
+  </mat-menu>
+
+  <mat-menu #channelMenu="matMenu">
+    <button mat-menu-item (click)="deleteGroup(selectedGroup)">Delete Group</button>
+  </mat-menu>
 
 
 </div>
