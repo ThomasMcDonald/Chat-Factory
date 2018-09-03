@@ -83,26 +83,26 @@ Once built the server will serve the dist folder which contains the built angula
 
 ### User API
 #### loginVerify
-``` app.post('/loginVerify', function (req, res){}); ```
+``` app.post('/loginVerify', function (req, res){}); ```  
 This request takes in the username provided by the login form, it then checks if the user exists in the current Users[] array.   
 If the user does not exist it will throw an error, if the user does exist it will prompt the client to navigate to dashboard.
 
 #### Create User
-``` app.post('/createUser', function (req, res){}); ```
+``` app.post('/createUser', function (req, res){}); ```  
 This request takes in the email, username and role from the new user form, it then checks if the user already exists in the current Users[] array.  
 If the User Already exists it will throw an error.
 If the User doesnt exist it will create and push the new User to the Users[] array.
 it will then use basic socket.io functionality to emit the new Users[] array to all sockets.
 
 #### Delete User
-``` app.post('/deleteUser', function (req, res){}); ```
+``` app.post('/deleteUser', function (req, res){}); ```  
 This request takes in the userID of the user to be removed, it loops through the Users[] array until it finds a matching user then deletes it.  
 Returns a message if the User has been deleted.  
 It also prompts the clients to request an updated data set.
 
 ### Group API
 #### Create Group
-``` app.post('/createGroup', function (req, res){}); ``` 
+``` app.post('/createGroup', function (req, res){}); ```  
 This request takes in the name and topic from the new Group form.  
 It will create and push the new Group to the Groups[] array.
 It will push the Group ID, to the _inGroup array of the User that created it.
@@ -110,7 +110,7 @@ It will also push the Group ID, to the _inGroup array of the Super User
 It also prompts the clients to request an updated data set.
 
 #### Get Group
-``` app.post('/getGroup', function (req, res){}); ``` 
+``` app.post('/getGroup', function (req, res){}); ```  
 This function returns all details for the requested group.
 
 #### Remove Group
@@ -139,43 +139,41 @@ As well as removing any Users._inChannel[] elements that equal to the channelID 
 ### Hybrid Group and Channel API
 The below functions cater for 2 options each, this has been done to prevent redundancy.  
 #### Remove User form Group or Channel
-``` app.post('/removeUserFromGroupChannel', function (req, res){}); ```   
-Depending on the option given is what is removed.
-``` option == channel ```
-removing any Users._inChannel[] elements that equal to the channelID being removed. 
-
-
-``` option == Group ``` 
+``` app.post('/removeUserFromGroupChannel', function (req, res){}); ```  
+Depending on the option given is what is removed.  
+``` option == channel ```  
+removing any Users._inChannel[] elements that equal to the channelID being removed.  
+``` option == Group ```   
 removing any Users.inGroup[] elements that equal to the groupID being removed. 
 The Channels that belong to the group will be removed from the User[]._inChannel array, removing any Channels that _owner equals the groupID being removed.  
 It also prompts the clients to request an updated data set.
 #### Add User to Group or Channel
-``` app.post('/addUsertoGroupChannel', function (req, res){}); ```  
-Depending on the option given is what is added to.
-``` option == channel ```
+``` app.post('/addUsertoGroupChannel', function (req, res){}); ```    
+Depending on the option given is what is added to.  
+``` option == channel ```  
 This checks if the user is already in the channel  before adding to the channel, nothing will happen if the user already is in the channel.  
-If a user is not already in the channel then the _inChannel[] of the given user If the user isnt in the group that the channel belongs to then the User will also be added to that group, updating the Users[]._inGroup array with the GroupID
-``` option == Group ```
+If a user is not already in the channel then the _inChannel[] of the given user If the user isnt in the group that the channel belongs to then the User will also be added to that group, updating the Users[]._inGroup array with the GroupID.  
+``` option == Group ```  
 If the user is not already in the group, then they will simply be added to the group  
 It also prompts the clients to request an updated data set.
 ### Basic Socket Implementation
 Basic socket.io functions have been implementated to cater for real time data access, this prevents user from accessing channels or groups that they have been removed from. As well as having an updated list of all users when it comes to adding to groups/channels.
 
 
-```  socket.on('loginSetup', function(id){}); ```  
+```  socket.on('loginSetup', function(id){}); ```    
 After the user has logged in and has connected its socket, the server will recieve a 'loginSetup' request. This will send all the filterd data to the user that requested.
-```  socket.on('requestData', function(id){}); ```  
+```  socket.on('requestData', function(id){}); ```    
 When the server recieves the 'requestData' message it will send all filtered data to the user that requested.
-```  socket.on('disconnect', function(id){}); ```  
+```  socket.on('disconnect', function(id){}); ```    
 This is called when the server detects that a user has disconnected, generally this means the user has logged out.
 
     
 ### Custom Functions
-The below functions help with the functionality explained above.
-``` function usersChannels(currentUser){} ```
+The below functions help with the functionality explained above.  
+``` function usersChannels(currentUser){} ```  
 This function takes in the CurrentUsers ID, filters and returns the Channels[] array to only contain the Channels the User is currently in.  
 
-``` function usersGroups(currentUser){} ```
+``` function usersGroups(currentUser){} ```  
 This function takes in the CurrentUsers ID, filters and returns the Groups[] array to only contain the Groups the User is currently in.  
 ## Angular Architecture
 This angular project uses app-routing to help navigate between views.  
