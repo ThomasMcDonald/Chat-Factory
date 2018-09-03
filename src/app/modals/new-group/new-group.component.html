@@ -1,0 +1,23 @@
+<div>
+    <h2 mat-dialog-title>Create New Group</h2>
+     <form [formGroup]="newGroupForm" (ngSubmit)="onCloseConfirm()">
+    <mat-dialog-content class="mat-typography login">
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Name" formControlName="name" required>
+
+            </mat-form-field>
+            <br>
+            <mat-form-field class="full-width">
+                <input matInput placeholder="Topic" formControlName="topic" required>
+            </mat-form-field>
+            <br>
+                <input type="hidden" placeholder="owner" formControlName="owner">
+    </mat-dialog-content>
+    <p> {{ newGroupForm.status }}</p>
+  <mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" (click)="showSpinner = !showSpinner"  [disabled]="newGroupForm.invalid">Create
+        <mat-spinner color="accent" mode="indeterminate" *ngIf="showSpinner"></mat-spinner>
+    </button>
+  </mat-dialog-actions>
+   </form>
+</div>

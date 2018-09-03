@@ -6,7 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule }     from './app-routing/app-routing.module';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSidenavModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatCardModule, MatGridListModule, MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatListModule, MatDialogModule, MatSelectModule } from '@angular/material';
+import { MatSidenavModule, MatRadioModule, MatInputModule, MatFormFieldModule, MatIconModule, MatToolbarModule, MatButtonModule, MatCardModule, MatGridListModule, MatProgressSpinnerModule, MatMenuModule, MatDividerModule, MatListModule, MatDialogModule, MatSelectModule, MatTooltipModule, MatCheckboxModule,MatSnackBarModule } from '@angular/material';
 
 import { AppComponent } from './app.component';
 
@@ -17,7 +17,11 @@ import { RoomComponent } from './room/room.component';
 
 //Modal Dialog
 import { NewUserComponent } from './modals/new-user/new-user.component';
-import { AddToGroupComponent } from './modals/add-to-group/add-to-group.component';
+import { NewGroupComponent } from './modals/new-group/new-group.component';
+import { NewChannelComponent } from './modals/new-channel/new-channel.component';
+import { AddToGroupChannelComponent } from './modals/add-to-group-channel/add-to-group-channel.component';
+import { RemoveUserGroupChannelComponent } from './modals/remove-user-group-channel/remove-user-group-channel.component';
+import { DeleteUserComponent } from './modals/delete-user/delete-user.component';
 
 
 @NgModule({
@@ -27,7 +31,11 @@ import { AddToGroupComponent } from './modals/add-to-group/add-to-group.componen
     DashboardComponent,
     NewUserComponent,
     RoomComponent,
-    AddToGroupComponent
+    NewGroupComponent,
+    NewChannelComponent,
+    AddToGroupChannelComponent,
+    RemoveUserGroupChannelComponent,
+    DeleteUserComponent
   ],
   imports: [
     BrowserModule,
@@ -50,9 +58,13 @@ import { AddToGroupComponent } from './modals/add-to-group/add-to-group.componen
     MatDividerModule,
     MatListModule,
     MatDialogModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatSnackBarModule
   ],
-  entryComponents: [NewUserComponent,AddToGroupComponent],
+  entryComponents: [NewUserComponent,NewGroupComponent, NewChannelComponent, AddToGroupChannelComponent, DeleteUserComponent,RemoveUserGroupChannelComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

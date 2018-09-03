@@ -7,38 +7,38 @@ import {ErrorStateMatcher} from '@angular/material/core';
 import { DataService } from '../../services/data/data.service'
 
 @Component({
-  selector: 'app-new-user',
-  templateUrl: './new-user.component.html',
-  styleUrls: ['./new-user.component.css']
+  selector: 'app-new-group',
+  templateUrl: './new-group.component.html',
+  styleUrls: ['./new-group.component.css']
 })
-export class NewUserComponent implements OnInit {
+export class NewGroupComponent implements OnInit {
+  newGroupForm: FormGroup;
   get url():String {
     return this.dataService.url;
   }
-  errorMsg;
-  showSpinner;
-  newUserForm = this.fb.group({
-    email: ['', Validators.required],
-    username: ['', Validators.required],
-    role: ['',Validators.required]
+
+
+  constructor(private dataService: DataService,public dialogRef: MatDialogRef<NewGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
+
+   this.newGroupForm = fb.group({
+    name: ['', Validators.required],
+    topic: ['', Validators.required],
+    owner: [this.data.CurrentUser._id,Validators.required]
   });
 
-
-  constructor(private dataService: DataService,public dialogRef: MatDialogRef<NewUserComponent>, private fb: FormBuilder, private http: HttpClient) { }
+  }
 
   ngOnInit() {
   }
 
   onCloseConfirm() {
-    this.errorMsg = "";
-    this.http.post(this.url+'/createUser', this.newUserForm.value)
+    this.http.post(this.url+'/createGroup', this.newGroupForm.value)
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){
             console.log(res['msg'])
-            this.showSpinner = false;
-            this.newUserForm.controls['username'].setErrors({'Exists': "User Already Exists'"});
-            this.errorMsg = res['msg'];
+            //Throw error message for duplicate user here
+            //Probably in a text popup
           }
           else{
             this.dialogRef.close(res);
@@ -49,8 +49,9 @@ export class NewUserComponent implements OnInit {
         }
       );
   }
+
   onCloseCancel() {
-    this.dialogRef.close();
+    this.dialogRef.close("cancel");
   }
 
 }
