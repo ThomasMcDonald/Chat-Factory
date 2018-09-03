@@ -27,7 +27,7 @@ export class AddToGroupChannelComponent implements OnInit {
   }
 
 
-  constructor(private dataService: DataService,public dialogRef: MatDialogRef<AddToChannelGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
+  constructor(private dataService: DataService,public dialogRef: MatDialogRef<AddToGroupChannelComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
   this.channelID = this.data.channelID;
   this.option = this.data.option;
   this.userDetails = this.data.userDetails;
