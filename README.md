@@ -179,6 +179,25 @@ This function takes in the CurrentUsers ID, filters and returns the Groups[] arr
 This angular project uses app-routing to help navigate between views.  
 The two mains views are: Login and Dashboard.  
 
+### Routes
+First accessing the webpage the user will be forwarded to the /login route to use the login form, when the form has been successful the user will navigate to the Dashboard path which will redirect to the first group and the first channel URL. This will be used to its full capacity when a database is implemented.
+```
+ { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent,
+    children: [
+            {
+                path:'',
+                redirectTo: 'group/0/channel/0',
+                pathMatch: 'full'
+            },
+            {
+                path:'group/:id/channel/:channelID',
+                component: RoomComponent
+            }
+          ]
+  }
+```
 
 ### Main components
 
