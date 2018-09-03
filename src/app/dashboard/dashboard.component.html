@@ -7,7 +7,7 @@
         </button>
       </li>
       <li class="teams__item" *ngFor="let group of Groups; let i = index">
-        <button class="teams__button"  [routerLink]="['group',i,'channel',relaventChannel(group._id)]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id)" [matTooltip]="group._name" matTooltipPosition="after">
+        <button class="teams__button unselectable" [routerLink]="['group',group._id]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id)" (contextmenu)="rightClick()" [matTooltip]="group._name" matTooltipPosition="after">
           {{ groupAcronym(group._name) }}
         </button>
       </li>
@@ -16,7 +16,7 @@
   <div class="sidebar">
     <button class="team-menu" [matMenuTriggerFor]="mainMenu">
       <div class="team-menu__info">
-        <h1 class="team-menu__name" *ngIf="Groups && Groups.length > 0; else no_group">{{ Groups[selectedGroup]?._name }}</h1>
+        <h1 class="team-menu__name" *ngIf="Groups && Groups.length > 0; else no_group">{{ Groups[selectedGroup]._name }}</h1>
         <ng-template #no_group><h1 class="team-menu__name">No Groups Yet</h1></ng-template>
         <div class="team-menu__status">
           <span class="team-menu__username">{{userDetails._username}}</span>
@@ -66,7 +66,7 @@
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="removeChannel(selectedChannel)">Delete Current Channel</button>
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" [matMenuTriggerFor]="removeUser">Remove From:</button>
   </mat-menu>
-  
+
   <mat-menu #removeUser="matMenu">
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="removeFromGroupchannel('Group',selectedGroup)">Group</button>
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="removeFromGroupchannel('Channel',selectedChannel)">Channel</button>

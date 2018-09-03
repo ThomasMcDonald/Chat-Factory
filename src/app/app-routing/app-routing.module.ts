@@ -11,11 +11,15 @@ const routes: Routes = [
     children: [
             {
                 path:'',
-                redirectTo: 'group/0/channel/0',
+                redirectTo: 'group/0',
                 pathMatch: 'full'
             },
             {
                 path:'group/:id/channel/:channelID',
+                component: RoomComponent
+            },
+            {
+                path:'group/:id',
                 component: RoomComponent
             }
           ]

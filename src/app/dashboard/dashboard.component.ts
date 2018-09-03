@@ -9,7 +9,8 @@ import { NewChannelComponent } from '../modals/new-channel/new-channel.component
 import { AddToGroupChannelComponent } from '../modals/add-to-group-channel/add-to-group-channel.component';
 import { RemoveUserGroupChannelComponent } from '../modals/remove-user-group-channel/remove-user-group-channel.component';
 import { DeleteUserComponent } from '../modals/delete-user/delete-user.component';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar} from '@angular/material';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatMenuTrigger} from '@angular/material';
+import { ViewChild } from '@angular/core';
 
 
 @Component({
@@ -103,7 +104,7 @@ export class DashboardComponent implements OnInit {
          this.snackBar.open("Group Created", "", {
         duration: 2000,
         });
-        
+
       }
     //  this.dataService.Groups = this.Groups = result.groups;
     });
@@ -151,9 +152,12 @@ deleteGroup(id){
      .subscribe(
        res => {
          if(res['statusCode'] == "Success"){
-         this.snackBar.open("Group Deleted", "", {
-           duration: 2000,
-         });
+           this.router.navigate(['dashboard']);
+           this.selectedGroup = 0;
+           this.selectedChannel = 0;
+           this.snackBar.open("Group Deleted", "", {
+             duration: 2000,
+           });
        }
        },
        err => {
@@ -194,7 +198,7 @@ removeFromGroupchannel(option,id){
 // Changes the currently selected group and channel
 selectGroupChannel(groupID){
   this.selectedGroup = groupID
-  this.selectedChannel = this.relaventChannel(groupID)
+  this.selectedChannel = null;
 }
 
 // Gets the best channel for the current group
@@ -218,6 +222,10 @@ relaventChannel(groupID){
   return 0;
 }
 
+rightClick(){
+  console.log("Context Matters")
+  return false;
+}
 
 // This function gets the first letter of the first and second word
 // Creates an acronym for display

@@ -96,13 +96,21 @@ app.post('/deleteUser', function (req, res) {
 
 // Create Group
 app.post('/createGroup', function (req, res) {
-  GroupID = Groups[Groups.length-1]._id + 1;
+  GroupID = 0;
+  if(Groups[Groups.length-1] == undefined){
+    GroupID = 0;
+  } else{
+    GroupID = Groups[Groups.length-1]._id + 1;
+  }
+
 
   Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner));
   Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
-  if(req.body.owner != 0){
-      Users[0]._inGroup.push(GroupID); // Add Super user to Group
-  }
+
+  // if(Users[req.body.owner]._username == "super" && ){
+  //     Users[0]._inGroup.push(GroupID); // Add Super user to Group
+  //     console.log("Not Super User")
+  // }
 
   res.send({statusCode: "Success", msg: "Group Created" })
   io.emit('newData');
@@ -119,6 +127,7 @@ app.post('/getGroup', function (req, res) {
 // Remove given Group, Channels within that group, and inChannel elements in the User array
 app.post('/removeGroup', function (req, res) {
   removedGroup = req.body._groupID;
+  console.log(removedGroup);
   removedChannels = [];
   for(var i=0;i<Channels.length;i++){
     if(Channels[i]._groupID == removedGroup){
@@ -126,6 +135,8 @@ app.post('/removeGroup', function (req, res) {
       removedChannels.push(i);
     }
   }
+
+  // Remove Channels from Users _inChannel array
   for(var i=0;i<Users.length;i++){
     for(var j=0;j<removedChannels.length;j++){
       for(var k=0;k<Users[i]._inChannel.length;k++){
@@ -134,11 +145,18 @@ app.post('/removeGroup', function (req, res) {
         }
       }
     }
+    //Remove Group from Users _inGroup array
+    for(var l=0;l<Users[i]._inGroup.length;l++){
+      if(Users[i]._inGroup[l] == removedGroup){
+        Users[i]._inGroup.splice(l,1);
+        }
+    }
   }
 
   for(var i=0;i<Groups.length;i++){
     if(Groups[i]._id == removedGroup){
-      Groups.splice(removedGroup,1);
+      console.log("same delete " + Groups[i]._id)
+      Groups.splice(i,1);
     }
   }
 
@@ -160,10 +178,10 @@ app.post('/removeUserFromGroupChannel', function(req, res){
   console.log(req.body);
   removedChannels = [];
   if(option == "Channel"){
-    
+
     for(var i = 0;i<Users[userID]._inChannel.length;i++){
       if(Users[userID]._inChannel[i] == removedGroupChannel){
-        
+
         Users[userID]._inChannel.splice(i,1);
       }
     }
@@ -204,6 +222,7 @@ app.post('/addUsertoGroupChannel', function (req, res) {
   userID = req.body.userID;
   option = req.body.option
   inGroup = false;
+
   if(option == "Group"){
     for(var i=0;i<Users[userID]._inGroup.length;i++){
       if(Users[userID]._inGroup[i] == groupChannelID){
@@ -239,7 +258,13 @@ app.post('/addUsertoGroupChannel', function (req, res) {
 
 // Create Channel
 app.post('/createChannel', function (req, res) {
-  channelID = Channels[Channels.length-1]._id + 1;
+  channelID = 0;
+  if(Channels[Channels.length-1] == undefined){
+    channelID = 0;
+  } else{
+    channelID = Channels[Channels.length-1]._id + 1;
+  }
+
   Channels.push(new Channel(channelID,req.body.name,req.body.topic,req.body.groupID,req.body.owner));
   Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
   if(req.body.owner != 0) {
@@ -296,6 +321,8 @@ io.on('connection', function(socket){
      currentUser = Users[id];
      userGroups = usersGroups(currentUser);
      userChannels = usersChannels(currentUser);
+     // console.log(userGroups);
+     // console.log(userChannels);
     socket.emit('updatedData',{groups: userGroups, channels: userChannels, users: Users})
   });
 
@@ -310,7 +337,6 @@ io.on('connection', function(socket){
 // Returns only the channels the user is in
 function usersChannels(currentUser) {
   userChannels = [];
-
   if(currentUser._inChannel != undefined){
     for(var i=0;i<Channels.length;i++){
       for(var j=0;j<currentUser._inChannel.length;j++){
@@ -347,10 +373,10 @@ function usersGroups(currentUser){
 function loadserverCache () {
     var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
     if(data == '') {
-        Users.push(new User(0,"super","super@gmail.com","Super",[0],[0]));
-        Users.push(new User(1,"default","default@gmail.com","Regular",[],[]));
-        Groups.push(new Group(0,"Calamari Race Team","Squad Tings",0));
-        Channels.push(new Channel(0,"General","General Chat",0,0));
+         Users.push(new User(0,"super","super@gmail.com","Super",[],[]));
+        // Users.push(new User(1,"default","default@gmail.com","Regular",[],[]));
+        // Groups.push(new Group(0,"Calamari Race Team","Squad Tings",0));
+        // Channels.push(new Channel(0,"General","General Chat",0,0));
 
         fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
         if (err) throw err;
