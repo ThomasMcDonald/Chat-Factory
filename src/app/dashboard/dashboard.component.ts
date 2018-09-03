@@ -6,7 +6,7 @@ import { DataService } from '../services/data/data.service'
 import { NewUserComponent } from '../modals/new-user/new-user.component';
 import { NewGroupComponent } from '../modals/new-group/new-group.component';
 import { NewChannelComponent } from '../modals/new-channel/new-channel.component';
-import { AddToChannelComponent } from '../modals/add-to-channel/add-to-channel.component';
+import { AddToGroupChannelComponent } from '../modals/add-to-group-channel/add-to-group-channel.component';
 import { RemoveUserGroupChannelComponent } from '../modals/remove-user-group-channel/remove-user-group-channel.component';
 import { DeleteUserComponent } from '../modals/delete-user/delete-user.component';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar} from '@angular/material';
@@ -166,7 +166,7 @@ deleteGroup(id){
 
 // Opens Modal For inviting User to group or channel depending on option given
 inviteToGroupChannel(option,id){
-  let dialogRef = this.dialog.open(AddToChannelComponent, {
+  let dialogRef = this.dialog.open(AddToGroupChannelComponent, {
     width: '600px',
     data: {option: option , channelID: id, userDetails: this.userDetails}
   });

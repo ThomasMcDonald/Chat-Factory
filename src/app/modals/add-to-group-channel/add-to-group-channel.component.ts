@@ -8,11 +8,11 @@ import { DataService } from '../../services/data/data.service'
 
 
 @Component({
-  selector: 'app-add-to-channel',
-  templateUrl: './add-to-channel.component.html',
-  styleUrls: ['./add-to-channel.component.css']
+  selector: 'AddToChannelGroupComponent',
+  templateUrl: './add-to-group-channel.component.html',
+  styleUrls: ['./add-to-group-channel.component.css']
 })
-export class AddToChannelComponent implements OnInit {
+export class AddToGroupChannelComponent implements OnInit {
 
   addUser;
   channelID;
@@ -27,7 +27,7 @@ export class AddToChannelComponent implements OnInit {
   }
 
 
-  constructor(private dataService: DataService,public dialogRef: MatDialogRef<AddToChannelComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
+  constructor(private dataService: DataService,public dialogRef: MatDialogRef<AddToChannelGroupComponent>, @Inject(MAT_DIALOG_DATA) public data: any, private fb: FormBuilder, private http: HttpClient) {
   this.channelID = this.data.channelID;
   this.option = this.data.option;
   this.userDetails = this.data.userDetails;

@@ -19,7 +19,7 @@ import { RoomComponent } from './room/room.component';
 import { NewUserComponent } from './modals/new-user/new-user.component';
 import { NewGroupComponent } from './modals/new-group/new-group.component';
 import { NewChannelComponent } from './modals/new-channel/new-channel.component';
-import { AddToChannelComponent } from './modals/add-to-channel/add-to-channel.component';
+import { AddToGroupChannelComponent } from './modals/add-to-group-channel/add-to-group-channel.component';
 import { RemoveUserGroupChannelComponent } from './modals/remove-user-group-channel/remove-user-group-channel.component';
 import { DeleteUserComponent } from './modals/delete-user/delete-user.component';
 
@@ -33,7 +33,7 @@ import { DeleteUserComponent } from './modals/delete-user/delete-user.component'
     RoomComponent,
     NewGroupComponent,
     NewChannelComponent,
-    AddToChannelComponent,
+    AddToGroupChannelComponent,
     RemoveUserGroupChannelComponent,
     DeleteUserComponent
   ],
@@ -64,7 +64,7 @@ import { DeleteUserComponent } from './modals/delete-user/delete-user.component'
     MatRadioModule,
     MatSnackBarModule
   ],
-  entryComponents: [NewUserComponent,NewGroupComponent, NewChannelComponent, AddToChannelComponent, DeleteUserComponent,RemoveUserGroupChannelComponent],
+  entryComponents: [NewUserComponent,NewGroupComponent, NewChannelComponent, AddToGroupChannelComponent, DeleteUserComponent,RemoveUserGroupChannelComponent],
   providers: [],
   bootstrap: [AppComponent]
 })
