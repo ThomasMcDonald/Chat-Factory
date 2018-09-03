@@ -64,7 +64,7 @@ import { DeleteUserComponent } from './modals/delete-user/delete-user.component'
     MatRadioModule,
     MatSnackBarModule
   ],
-  entryComponents: [NewUserComponent,NewGroupComponent, NewChannelComponent, AddToChannelComponent, DeleteUserComponent],
+  entryComponents: [NewUserComponent,NewGroupComponent, NewChannelComponent, AddToChannelComponent, DeleteUserComponent,RemoveUserGroupChannelComponent],
   providers: [],
   bootstrap: [AppComponent]
 })

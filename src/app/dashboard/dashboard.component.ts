@@ -99,7 +99,12 @@ export class DashboardComponent implements OnInit {
       data: { CurrentUser: this.userDetails }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+      if(result != undefined){
+         this.snackBar.open("Group Created", "", {
+        duration: 2000,
+        });
+        
+      }
     //  this.dataService.Groups = this.Groups = result.groups;
     });
   }
@@ -159,6 +164,7 @@ deleteGroup(id){
      );
 }
 
+// Opens Modal For inviting User to group or channel depending on option given
 inviteToGroupChannel(option,id){
   let dialogRef = this.dialog.open(AddToChannelComponent, {
     width: '600px',
@@ -169,12 +175,36 @@ inviteToGroupChannel(option,id){
   });
 }
 
-relaventChannel(){
+
+// Opens Modal For Removing User from group or channel depending on option given
+removeFromGroupchannel(option,id){
+  let dialogRef = this.dialog.open(RemoveUserGroupChannelComponent, {
+    width: '600px',
+    data: {option: option , channelID: id, userDetails: this.userDetails}
+  });
+  dialogRef.afterClosed().subscribe(result => {
+    if(result != undefined){
+       this.snackBar.open("User Removed From " + option, "", {
+        duration: 2000,
+      });
+    }
+  });
+}
+
+// Changes the currently selected group and channel
+selectGroupChannel(groupID){
+  this.selectedGroup = groupID
+  this.selectedChannel = this.relaventChannel(groupID)
+}
+
+// Gets the best channel for the current group
+// This is called on the route and the function above
+relaventChannel(groupID){
   var relChannels = [];
   if(this.Channels == undefined)return 0;
 
   for(var i = 0;i<this.Channels.length;i++){
-    if(this.Channels[i]._groupID == this.selectedGroup){
+    if(this.Channels[i]._groupID == groupID){
       relChannels.push(this.Channels[i]);
     }
   }

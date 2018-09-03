@@ -11,9 +11,9 @@ export class DataService {
   public currentUser;
 
   // Change URL depending on which environment is being used
-  public url = 'http://localhost:8080'; // Local
- //public url = 'https://node-garbage-thomasmcdonald1996.c9users.io'; // Cloud9
- // private url = 'https://chat-factory.herokuapp.com'; // "Production"
+ // public url = 'http://localhost:8080'; // Local
+   public url = 'https://node-garbage-thomasmcdonald1996.c9users.io'; // Cloud9
+ // public url = 'https://chat-factory.herokuapp.com'; // "Production"
 
   constructor() {
    }

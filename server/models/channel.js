@@ -4,8 +4,6 @@ var Channel = function (id, name,topic,groupID,owner) {
     this._topic = topic;
     this._groupID = groupID;
     this._owner = owner;
-    //this._createdAt = created_at;
-    //this._createdBy = created_by;
 };
 
 

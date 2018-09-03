@@ -154,13 +154,16 @@ app.post('/removeGroup', function (req, res) {
 // Remove the given user from the given group or channel
 // dependent on option given
 app.post('/removeUserFromGroupChannel', function(req, res){
-  removedGroupChannel = req.body._groupID;
+  removedGroupChannel = req.body.removeID;
   option = req.body.option;
   userID = req.body.userID;
+  console.log(req.body);
   removedChannels = [];
   if(option == "Channel"){
-    for(var i = 0;i<Users[userID]._inChannel;i++){
+    
+    for(var i = 0;i<Users[userID]._inChannel.length;i++){
       if(Users[userID]._inChannel[i] == removedGroupChannel){
+        
         Users[userID]._inChannel.splice(i,1);
       }
     }
@@ -171,16 +174,14 @@ app.post('/removeUserFromGroupChannel', function(req, res){
         removedChannels.push(i);
       }
     }
-    for(var i=0;i<Users.length;i++){
       for(var j=0;j<removedChannels.length;j++){
         for(var k=0;k<Users[i]._inChannel.length;k++){
-        if(Users[i]._inChannel[k] == removedChannels[j]){
-          Users[i]._inChannel.splice(k,1);
+        if(Users[userID]._inChannel[k] == removedChannels[j]){
+          Users[userID]._inChannel.splice(k,1);
           }
         }
-      }
     }
-    for(var i = 0;i<Users[userID]._inGroup;i++){
+    for(var i = 0;i<Users[userID]._inGroup.length;i++){
       if(Users[userID]._inGroup[i] == removedGroupChannel){
         Users[userID]._inGroup.splice(i,1);
       }
@@ -216,7 +217,7 @@ app.post('/addUsertoGroupChannel', function (req, res) {
 
   } else if(option == "Channel"){
     //opted in to just adding user to the group if they arent already
-    Users[userID]._inChannel.push(channelID);
+    Users[userID]._inChannel.push(groupChannelID);
     for(var i=0;i<Users[userID]._inChannel.length;i++){
       if(Users[userID]._inGroup[i] == Channels[groupChannelID]._owner){
         inGroup = true;
@@ -274,6 +275,7 @@ app.post('/removeChannel', function (req, res) {
     if (err) throw err;
   });
 });
+
 
 // Socket Functionality
 io.on('connection', function(socket){
