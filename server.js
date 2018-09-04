@@ -103,15 +103,22 @@ app.post('/createGroup', function (req, res) {
     GroupID = Groups[Groups.length-1]._id + 1;
   }
 
+  if(Channels[Channels.length-1] == undefined){
+    channelID = 0;
+  } else{
+    channelID = Channels[Channels.length-1]._id + 1;
+  }
 
-  Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner));
+
+  Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner)); // Create Group
+  Channels.push(new Channel(channelID,"General","General chat",GroupID,req.body.owner)); // Add Initial Channel
   Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
+  Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
 
   // if(Users[req.body.owner]._username == "super" && ){
   //     Users[0]._inGroup.push(GroupID); // Add Super user to Group
   //     console.log("Not Super User")
   // }
-
   res.send({statusCode: "Success", msg: "Group Created" })
   io.emit('newData');
   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
@@ -267,9 +274,9 @@ app.post('/createChannel', function (req, res) {
 
   Channels.push(new Channel(channelID,req.body.name,req.body.topic,req.body.groupID,req.body.owner));
   Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
-  if(req.body.owner != 0) {
-    Users[0]._inChannel.push(channelID); // Adds the Super user to the Channel
-  }
+  // if(req.body.owner != 0) {
+  //   Users[0]._inChannel.push(channelID); // Adds the Super user to the Channel
+  // }
 
   res.send({statusCode: "Success", msg: "Channel Created" })
   io.emit('newData');
@@ -311,19 +318,16 @@ io.on('connection', function(socket){
      userID = id;
      currentUser = Users[userID];
      currentUser._socket = socket.id;
-     userChannels = usersChannels(currentUser);
-     userGroups = usersGroups(currentUser);
-
-    socket.emit('loginDetails',{groups: userGroups, channels: userChannels, users: Users})
+     userGroups = usersGroups(currentUser,Groups,Channels);
+    socket.emit('loginDetails',{groups: userGroups, users: Users})
   });
 
   socket.on('requestData', function(id){
      currentUser = Users[id];
-     userGroups = usersGroups(currentUser);
-     userChannels = usersChannels(currentUser);
-     // console.log(userGroups);
-     // console.log(userChannels);
-    socket.emit('updatedData',{groups: userGroups, channels: userChannels, users: Users})
+     userGroups = usersGroups(currentUser,Groups,Channels);
+
+     //userChannels = usersChannels(currentUser);
+    socket.emit('updatedData',{groups: userGroups, users: Users})
   });
 
   socket.on('disconnect', function(){
@@ -335,35 +339,53 @@ io.on('connection', function(socket){
 
 // Filters the Channels array
 // Returns only the channels the user is in
-function usersChannels(currentUser) {
-  userChannels = [];
-  if(currentUser._inChannel != undefined){
-    for(var i=0;i<Channels.length;i++){
-      for(var j=0;j<currentUser._inChannel.length;j++){
-        if(currentUser._inChannel[j] == Channels[i]._id){
-          userChannels.push(Channels[i]);
+// function usersChannels(currentUser) {
+//   userChannels = [];
+//   if(currentUser._inChannel != undefined){
+//     for(var i=0;i<Channels.length;i++){
+//       for(var j=0;j<currentUser._inChannel.length;j++){
+//         if(currentUser._inChannel[j] == Channels[i]._id){
+//           userChannels.push(Channels[i]);
+//         }
+//       }
+//     }
+//   }
+//
+//   return userChannels;
+// }
+
+// Filters the Groups and Channels into a new Array
+function usersGroups(currentUser,groups,channels){
+  temp = [];
+  tempGroups = JSON.parse(JSON.stringify(groups)); // This fixed all my problems,
+  tempChannels = JSON.parse(JSON.stringify(channels)); // Just in case
+  if(currentUser._inGroup != undefined && currentUser._inChannel != undefined){
+    for(var i=0;i<currentUser._inGroup.length;i++){
+      for(var j=0;j<tempGroups.length;j++){
+        if(tempGroups[j]._id == currentUser._inGroup[i]){
+          temp.push(tempGroups[j]);
+          temp[temp.length-1]['_channels'] = [];
         }
+      }
+    }
+
+    for(var p=0;p<temp.length;p++){
+      for(var k=0;k<currentUser._inChannel.length;k++){
+        for(var l=0;l<tempChannels.length;l++){
+        if(currentUser._inChannel[k] == tempChannels[l]._id && tempChannels[l]._groupID == temp[p]._id){
+          temp[p]['_channels'].push(tempChannels[l]);
+          console.log("Current USer CHANNEL" + " " + currentUser._inChannel[k]);
+          console.log("Temp Channel" + " " + tempChannels[l]._id);
+        }
+       }
+     }
+      if(temp[p]['_channels'].length > 0) {
+        temp[p]['_activeChannel'] = temp[p]['_channels'][0]._id;
       }
     }
   }
 
-  return userChannels;
-}
-
-// Filters the Groups array
-// Returns only the Groups the user is in
-function usersGroups(currentUser){
-  userGroups = [];
-  if(currentUser._inGroup != undefined){
-    for(var i=0;i<Groups.length;i++){
-      for(var j=0;j<currentUser._inGroup.length;j++){
-        if(currentUser._inGroup[j] == Groups[i]._id){
-          userGroups.push(Groups[i]);
-        }
-      }
-    }
-  }
-  return userGroups;
+  return temp;
 }
 
 //

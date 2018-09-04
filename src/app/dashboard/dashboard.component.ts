@@ -38,7 +38,7 @@ export class DashboardComponent implements OnInit {
     this.socket.on("loginDetails", (data) =>{
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
-      this.dataService.Channels = this.Channels = data.channels;
+      //this.dataService.Channels = this.Channels = data.channels;
     })
     this.socket.on("newData", (data) => {
       this.socket.emit("requestData",this.userDetails._id);
@@ -50,7 +50,7 @@ export class DashboardComponent implements OnInit {
       console.log(data);
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
-      this.dataService.Channels = this.Channels = data.channels;
+      //this.dataService.Channels = this.Channels = data.channels;
     })
 
      this.socket.on("newUser", (data) =>{
@@ -198,7 +198,6 @@ removeFromGroupchannel(option,id){
 // Changes the currently selected group and channel
 selectGroupChannel(groupID){
   this.selectedGroup = groupID
-  this.selectedChannel = null;
 }
 
 // Gets the best channel for the current group

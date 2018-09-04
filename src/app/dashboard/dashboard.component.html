@@ -7,7 +7,7 @@
         </button>
       </li>
       <li class="teams__item" *ngFor="let group of Groups; let i = index">
-        <button class="teams__button unselectable" [routerLink]="['group',group._id]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id)" (contextmenu)="rightClick()" [matTooltip]="group._name" matTooltipPosition="after">
+        <button class="teams__button unselectable" [routerLink]="['group',group._id,'channel',group._activeChannel]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id)" (contextmenu)="rightClick()" [matTooltip]="group._name" matTooltipPosition="after">
           {{ groupAcronym(group._name) }}
         </button>
       </li>
@@ -16,7 +16,7 @@
   <div class="sidebar">
     <button class="team-menu" [matMenuTriggerFor]="mainMenu">
       <div class="team-menu__info">
-        <h1 class="team-menu__name" *ngIf="Groups && Groups.length > 0; else no_group">{{ Groups[selectedGroup]._name }}</h1>
+        <h1 class="team-menu__name" *ngIf="Groups && Groups.length > 0; else no_group">{{ Groups[selectedGroup]?._name }}</h1>
         <ng-template #no_group><h1 class="team-menu__name">No Groups Yet</h1></ng-template>
         <div class="team-menu__status">
           <span class="team-menu__username">{{userDetails._username}}</span>
@@ -30,20 +30,22 @@
         </span>
         <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" class="channels__add" (click)="newChannelModal()"><mat-icon>add_circle_outline</mat-icon></button>
       </h2>
-      <ul class="channels__list"  *ngFor="let channel of Channels">
+      <ul class="channels__list"  *ngFor="let group of Groups">
+        <span *ngFor="let channel of group._channels">
         <li class="channels__item" *ngIf="channel._groupID == selectedGroup">
-          <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',channel._id]" routerLinkActive="channels__button--active" (click)="selectedChannel = channel._id">
+          <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',channel._id]" routerLinkActive="channels__button--active" (click)="group._activeChannel = selectedChannel = channel._id ">
             <span>{{channel._name}}</span>
             <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" mat-icon-button class="invite" matTooltip="Create Invite" matTooltipPosition="above" (click)="inviteToGroupChannel('Channel',channel?._id)"><mat-icon style="font-size:20px;">person_add</mat-icon></button>
           </button>
         </li>
+      </span>
       </ul>
     </div>
   </div>
 
   <div class="main">
     <header class="main__header">
-      <h1 class="main__h1" *ngIf="Channels && Channels.length > 0; else no_channel">{{ Channels[selectedChannel]?._name }}</h1>
+      <h1 class="main__h1" *ngIf="Groups && Groups._channels > 0; else no_channel">{{ Groups[selectedGroup].channels[selectedChannel]?._name }}</h1>
       <ng-template #no_channel><h1 class="main__h1">No Channels Yet</h1></ng-template>
       <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" class="ion-android-close" [matMenuTriggerFor]="channelMenu"><mat-icon>settings</mat-icon></button>
     </header>
