@@ -96,18 +96,9 @@ app.post('/deleteUser', function (req, res) {
 
 // Create Group
 app.post('/createGroup', function (req, res) {
-  GroupID = 0;
-  if(Groups[Groups.length-1] == undefined){
-    GroupID = 0;
-  } else{
-    GroupID = Groups[Groups.length-1]._id + 1;
-  }
+  GroupID = Math.floor(100000 + Math.random() * 900000);
+  channelID = Math.floor(100000 + Math.random() * 900000);
 
-  if(Channels[Channels.length-1] == undefined){
-    channelID = 0;
-  } else{
-    channelID = Channels[Channels.length-1]._id + 1;
-  }
 
 
   Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner)); // Create Group
@@ -115,6 +106,15 @@ app.post('/createGroup', function (req, res) {
   Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
   Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
 
+  if(req.body.owner == 0){
+    Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
+    Users[req.body.owner]._inChannel.push(channelID);
+  }else{
+    Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
+    Users[req.body.owner]._inChannel.push(channelID);
+    Users[0]._inGroup.push(GroupID); // Super user Additions
+    Users[0]._inChannel.push(channelID);
+  }
   // if(Users[req.body.owner]._username == "super" && ){
   //     Users[0]._inGroup.push(GroupID); // Add Super user to Group
   //     console.log("Not Super User")
@@ -134,21 +134,21 @@ app.post('/getGroup', function (req, res) {
 // Remove given Group, Channels within that group, and inChannel elements in the User array
 app.post('/removeGroup', function (req, res) {
   removedGroup = req.body._groupID;
-  console.log(removedGroup);
   removedChannels = [];
+
   for(var i=0;i<Channels.length;i++){
     if(Channels[i]._groupID == removedGroup){
+      removedChannels.push(Channels[i]._id);
       Channels.splice(i,1);
-      removedChannels.push(i);
     }
   }
-
   // Remove Channels from Users _inChannel array
   for(var i=0;i<Users.length;i++){
-    for(var j=0;j<removedChannels.length;j++){
-      for(var k=0;k<Users[i]._inChannel.length;k++){
+    for(var k=0;k<Users[i]._inChannel.length;k++){
+      for(var j=0;j<removedChannels.length;j++){
       if(Users[i]._inChannel[k] == removedChannels[j]){
         Users[i]._inChannel.splice(k,1);
+        Users[i]
         }
       }
     }
@@ -182,13 +182,11 @@ app.post('/removeUserFromGroupChannel', function(req, res){
   removedGroupChannel = req.body.removeID;
   option = req.body.option;
   userID = req.body.userID;
-  console.log(req.body);
   removedChannels = [];
   if(option == "Channel"){
 
     for(var i = 0;i<Users[userID]._inChannel.length;i++){
       if(Users[userID]._inChannel[i] == removedGroupChannel){
-
         Users[userID]._inChannel.splice(i,1);
       }
     }
@@ -196,7 +194,7 @@ app.post('/removeUserFromGroupChannel', function(req, res){
   else if(option == "Group"){
     for(var i=0;i<Channels.length;i++){
       if(Channels[i]._groupID == removedGroupChannel){
-        removedChannels.push(i);
+        removedChannels.push(Channels[i]._id);
       }
     }
       for(var j=0;j<removedChannels.length;j++){
@@ -273,10 +271,12 @@ app.post('/createChannel', function (req, res) {
   }
 
   Channels.push(new Channel(channelID,req.body.name,req.body.topic,req.body.groupID,req.body.owner));
-  Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
-  // if(req.body.owner != 0) {
-  //   Users[0]._inChannel.push(channelID); // Adds the Super user to the Channel
-  // }
+  if(req.body.owner == 0){
+    Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
+  }else{
+    Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
+    Users[0]._inChannel.push(channelID); // Super User additions
+  }
 
   res.send({statusCode: "Success", msg: "Channel Created" })
   io.emit('newData');
@@ -374,8 +374,6 @@ function usersGroups(currentUser,groups,channels){
         for(var l=0;l<tempChannels.length;l++){
         if(currentUser._inChannel[k] == tempChannels[l]._id && tempChannels[l]._groupID == temp[p]._id){
           temp[p]['_channels'].push(tempChannels[l]);
-          console.log("Current USer CHANNEL" + " " + currentUser._inChannel[k]);
-          console.log("Temp Channel" + " " + tempChannels[l]._id);
         }
        }
      }

@@ -10,14 +10,10 @@ const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent,
     children: [
             {
-                path:'',
-                redirectTo: 'group/0/channel/0',
-                pathMatch: 'full'
-            },
-            {
                 path:'group/:groupID/channel/:channelID',
                 component: RoomComponent
-            }
+            },
+
           ]
   }
 ];
