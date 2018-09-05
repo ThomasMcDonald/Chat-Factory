@@ -20,10 +20,10 @@
           <ng-container  *ngFor="let group of Groups">
             <ng-container *ngIf="group._id == selectedGroup">
               <h1 class="team-menu__name" >{{ group._name }}</h1>
-            </ng-container>  
-            <ng-template #no_group><h1 class="team-menu__name">No Groups Yet</h1></ng-template>
+            </ng-container>
           </ng-container>
         </ng-container>
+        <ng-template #no_group><h1 class="team-menu__name">No Groups Yet</h1></ng-template>
         <div class="team-menu__status">
           <span class="team-menu__username">{{userDetails._username}}</span>
         </div>
@@ -59,10 +59,10 @@
               <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" class="ion-android-close" [matMenuTriggerFor]="channelMenu"><mat-icon>settings</mat-icon></button>
             </ng-container>
           </ng-container>
-          <ng-template #no_channel><h1 class="main__h1">No Channels Yet</h1></ng-template>
         </ng-container>
+        <ng-template #no_channel><h1 class="main__h1">No Channels Yet</h1></ng-template>
       </ng-container>
-         
+
     </header>
     <div class="main__content">
       <div class="main__container">

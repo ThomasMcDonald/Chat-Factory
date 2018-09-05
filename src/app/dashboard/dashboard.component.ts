@@ -120,7 +120,9 @@ export class DashboardComponent implements OnInit {
       data: { CurrentUser: this.userDetails, selectedGroup: this.selectedGroup }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+      this.snackBar.open("Channel Created", "", {
+        duration: 2000,
+      });
     });
   }
 
@@ -165,7 +167,7 @@ deleteGroup(id){
        }
        },
        err => {
-         this.snackBar.open("ERROR: Connection Issue", "", {
+         this.snackBar.open("HTTP Error", "", {
            duration: 2000,
          });
        }
@@ -179,7 +181,9 @@ inviteToGroupChannel(option,id){
     data: {option: option , channelID: id, userDetails: this.userDetails}
   });
   dialogRef.afterClosed().subscribe(result => {
-    console.log(result)
+    this.snackBar.open("User Invited", "", {
+      duration: 2000,
+    });
   });
 }
 
@@ -206,13 +210,6 @@ selectGroupChannel(groupID,channelID){
 
 }
 
-// changeChannel(groupID,channelID){
-
-//   this.selectedChannel = channelID
-//   this.Groups[groupID]._activeChannel = channelID;
-
-// }
-
 // Gets the best channel for the current group
 // This is called on the route and the function above
 relaventChannel(groupID){
@@ -234,6 +231,8 @@ relaventChannel(groupID){
   return 0;
 }
 
+
+// For later use, captures right click and stops context menu from opening
 rightClick(){
   console.log("Context Matters")
   return false;

@@ -263,12 +263,7 @@ app.post('/addUsertoGroupChannel', function (req, res) {
 
 // Create Channel
 app.post('/createChannel', function (req, res) {
-  channelID = 0;
-  if(Channels[Channels.length-1] == undefined){
-    channelID = 0;
-  } else{
-    channelID = Channels[Channels.length-1]._id + 1;
-  }
+  channelID = Math.floor(100000 + Math.random() * 900000);
 
   Channels.push(new Channel(channelID,req.body.name,req.body.topic,req.body.groupID,req.body.owner));
   if(req.body.owner == 0){
