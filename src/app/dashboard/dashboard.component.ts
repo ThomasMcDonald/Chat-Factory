@@ -38,6 +38,7 @@ export class DashboardComponent implements OnInit {
     this.socket.on("loginDetails", (data) =>{
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
+      this. selectedChannel =  this.Groups[0]._activeChannel
       //this.dataService.Channels = this.Channels = data.channels;
     })
     this.socket.on("newData", (data) => {
@@ -155,6 +156,7 @@ deleteGroup(id){
            this.router.navigate(['dashboard']);
            this.selectedGroup = 0;
            this.selectedChannel = 0;
+           console.log(this.Groups);
            this.snackBar.open("Group Deleted", "", {
              duration: 2000,
            });
@@ -196,9 +198,18 @@ removeFromGroupchannel(option,id){
 }
 
 // Changes the currently selected group and channel
-selectGroupChannel(groupID){
+selectGroupChannel(groupID,channelID){
   this.selectedGroup = groupID
+  this.selectedChannel = channelID
+  
 }
+
+// changeChannel(groupID,channelID){
+
+//   this.selectedChannel = channelID
+//   this.Groups[groupID]._activeChannel = channelID;
+  
+// }
 
 // Gets the best channel for the current group
 // This is called on the route and the function above
