@@ -99,13 +99,9 @@ app.post('/createGroup', function (req, res) {
   GroupID = Math.floor(100000 + Math.random() * 900000);
   channelID = Math.floor(100000 + Math.random() * 900000);
 
-
-
   Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner)); // Create Group
   Channels.push(new Channel(channelID,"General","General chat",GroupID,req.body.owner)); // Add Initial Channel
-  Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
-  Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
-
+ 
   if(req.body.owner == 0){
     Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
     Users[req.body.owner]._inChannel.push(channelID);
@@ -115,10 +111,7 @@ app.post('/createGroup', function (req, res) {
     Users[0]._inGroup.push(GroupID); // Super user Additions
     Users[0]._inChannel.push(channelID);
   }
-  // if(Users[req.body.owner]._username == "super" && ){
-  //     Users[0]._inGroup.push(GroupID); // Add Super user to Group
-  //     console.log("Not Super User")
-  // }
+
   res.send({statusCode: "Success", msg: "Group Created" })
   io.emit('newData');
   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
@@ -162,7 +155,6 @@ app.post('/removeGroup', function (req, res) {
 
   for(var i=0;i<Groups.length;i++){
     if(Groups[i]._id == removedGroup){
-      console.log("same delete " + Groups[i]._id)
       Groups.splice(i,1);
     }
   }
@@ -321,8 +313,12 @@ io.on('connection', function(socket){
      currentUser = Users[id];
      userGroups = usersGroups(currentUser,Groups,Channels);
 
-     //userChannels = usersChannels(currentUser);
     socket.emit('updatedData',{groups: userGroups, users: Users})
+  });
+  
+  socket.on('user-reconnected', function (id) {
+     console.log(Users[id]._username + ' just reconnected');
+      Users[id]._socket = socket.id;
   });
 
   socket.on('disconnect', function(){

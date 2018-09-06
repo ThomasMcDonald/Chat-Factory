@@ -38,22 +38,29 @@ export class DashboardComponent implements OnInit {
     this.socket.on("loginDetails", (data) =>{
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
-      this.selectedChannel =  this.Groups[0]._activeChannel;
-      this.selectedGroup =  this.Groups[0]._id;
-      this.router.navigate(['dashboard','group',this.Groups[0]._id,'channel',this.Groups[0]._channels[0]._id]);
+      if(this.Groups.length > 0){
+      this.selectedChannel =  this.Groups[0]._activeChannel
+      this.selectedGroup = this.Groups[0]._id;
+      this.router.navigate(['dashboard','group',this.selectedGroup,'channel',this.selectedChannel]);
+      }
       //this.dataService.Channels = this.Channels = data.channels;
     })
     this.socket.on("newData", (data) => {
       this.socket.emit("requestData",this.userDetails._id);
     })
 
-
+   this.socket.on('reconnect', function () {
+      this.socket.emit('user-reconnected', this.userDetails._id);
+    });
     this.socket.on("updatedData", (data) =>{
-      console.log("Updated Data")
-      console.log(data);
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
       //this.dataService.Channels = this.Channels = data.channels;
+       if(this.selectedChannel == 0 && this.selectedGroup == 0){
+          this.selectedChannel =  this.Groups[0]._activeChannel
+          this.selectedGroup = this.Groups[0]._id;
+          this.router.navigate(['dashboard','group',this.selectedGroup,'channel',this.selectedChannel]);
+      }
     })
 
      this.socket.on("newUser", (data) =>{
@@ -79,7 +86,12 @@ export class DashboardComponent implements OnInit {
       width: '600px',
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+     if(result != undefined){
+         this.snackBar.open("User Created", "", {
+        duration: 2000,
+        });
+
+      }
     });
   }
 
@@ -120,9 +132,12 @@ export class DashboardComponent implements OnInit {
       data: { CurrentUser: this.userDetails, selectedGroup: this.selectedGroup }
     });
     dialogRef.afterClosed().subscribe(result => {
-      this.snackBar.open("Channel Created", "", {
+      if(result != undefined || result == "cancel"){
+         this.snackBar.open("Channel Created", "", {
         duration: 2000,
-      });
+        });
+
+      }
     });
   }
 
@@ -167,7 +182,7 @@ deleteGroup(id){
        }
        },
        err => {
-         this.snackBar.open("HTTP Error", "", {
+         this.snackBar.open("ERROR: Connection Issue", "", {
            duration: 2000,
          });
        }
@@ -181,9 +196,7 @@ inviteToGroupChannel(option,id){
     data: {option: option , channelID: id, userDetails: this.userDetails}
   });
   dialogRef.afterClosed().subscribe(result => {
-    this.snackBar.open("User Invited", "", {
-      duration: 2000,
-    });
+    console.log(result)
   });
 }
 
@@ -207,8 +220,15 @@ removeFromGroupchannel(option,id){
 selectGroupChannel(groupID,channelID){
   this.selectedGroup = groupID
   this.selectedChannel = channelID
-
+  
 }
+
+// changeChannel(groupID,channelID){
+
+//   this.selectedChannel = channelID
+//   this.Groups[groupID]._activeChannel = channelID;
+  
+// }
 
 // Gets the best channel for the current group
 // This is called on the route and the function above
@@ -231,8 +251,6 @@ relaventChannel(groupID){
   return 0;
 }
 
-
-// For later use, captures right click and stops context menu from opening
 rightClick(){
   console.log("Context Matters")
   return false;

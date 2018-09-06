@@ -16,7 +16,7 @@ const routes: Routes = [
             },
             {
                 path:'group/:groupID/channel/:channelID',
-                component: RoomComponent
+                component: RoomComponent,
             }
           ]
   }
