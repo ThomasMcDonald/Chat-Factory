@@ -15,8 +15,8 @@ const routes: Routes = [
                 pathMatch: 'full'
             },
             {
-                path:'group/:id/channel/:channelID',
-                component: RoomComponent
+                path:'group/:groupID/channel/:channelID',
+                component: RoomComponent,
             }
           ]
   }

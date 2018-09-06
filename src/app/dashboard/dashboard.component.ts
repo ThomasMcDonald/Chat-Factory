@@ -9,7 +9,8 @@ import { NewChannelComponent } from '../modals/new-channel/new-channel.component
 import { AddToGroupChannelComponent } from '../modals/add-to-group-channel/add-to-group-channel.component';
 import { RemoveUserGroupChannelComponent } from '../modals/remove-user-group-channel/remove-user-group-channel.component';
 import { DeleteUserComponent } from '../modals/delete-user/delete-user.component';
-import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar} from '@angular/material';
+import {MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatSnackBar, MatMenuTrigger} from '@angular/material';
+import { ViewChild } from '@angular/core';
 
 
 @Component({
@@ -37,19 +38,29 @@ export class DashboardComponent implements OnInit {
     this.socket.on("loginDetails", (data) =>{
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
-      this.dataService.Channels = this.Channels = data.channels;
+      if(this.Groups.length > 0){
+      this.selectedChannel =  this.Groups[0]._activeChannel
+      this.selectedGroup = this.Groups[0]._id;
+      this.router.navigate(['dashboard','group',this.selectedGroup,'channel',this.selectedChannel]);
+      }
+      //this.dataService.Channels = this.Channels = data.channels;
     })
     this.socket.on("newData", (data) => {
       this.socket.emit("requestData",this.userDetails._id);
     })
 
-
+   this.socket.on('reconnect', function () {
+      this.socket.emit('user-reconnected', this.userDetails._id);
+    });
     this.socket.on("updatedData", (data) =>{
-      console.log("Updated Data")
-      console.log(data);
       this.dataService.Groups = this.Groups = data.groups;
       this.dataService.Users = this.Users = data.users;
-      this.dataService.Channels = this.Channels = data.channels;
+      //this.dataService.Channels = this.Channels = data.channels;
+       if(this.selectedChannel == 0 && this.selectedGroup == 0){
+          this.selectedChannel =  this.Groups[0]._activeChannel
+          this.selectedGroup = this.Groups[0]._id;
+          this.router.navigate(['dashboard','group',this.selectedGroup,'channel',this.selectedChannel]);
+      }
     })
 
      this.socket.on("newUser", (data) =>{
@@ -75,7 +86,12 @@ export class DashboardComponent implements OnInit {
       width: '600px',
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+     if(result != undefined){
+         this.snackBar.open("User Created", "", {
+        duration: 2000,
+        });
+
+      }
     });
   }
 
@@ -103,7 +119,7 @@ export class DashboardComponent implements OnInit {
          this.snackBar.open("Group Created", "", {
         duration: 2000,
         });
-        
+
       }
     //  this.dataService.Groups = this.Groups = result.groups;
     });
@@ -116,7 +132,12 @@ export class DashboardComponent implements OnInit {
       data: { CurrentUser: this.userDetails, selectedGroup: this.selectedGroup }
     });
     dialogRef.afterClosed().subscribe(result => {
-      console.log(result)
+      if(result != undefined || result == "cancel"){
+         this.snackBar.open("Channel Created", "", {
+        duration: 2000,
+        });
+
+      }
     });
   }
 
@@ -151,9 +172,13 @@ deleteGroup(id){
      .subscribe(
        res => {
          if(res['statusCode'] == "Success"){
-         this.snackBar.open("Group Deleted", "", {
-           duration: 2000,
-         });
+           this.router.navigate(['dashboard']);
+           this.selectedGroup = 0;
+           this.selectedChannel = 0;
+           console.log(this.Groups);
+           this.snackBar.open("Group Deleted", "", {
+             duration: 2000,
+           });
        }
        },
        err => {
@@ -192,10 +217,18 @@ removeFromGroupchannel(option,id){
 }
 
 // Changes the currently selected group and channel
-selectGroupChannel(groupID){
+selectGroupChannel(groupID,channelID){
   this.selectedGroup = groupID
-  this.selectedChannel = this.relaventChannel(groupID)
+  this.selectedChannel = channelID
+  
 }
+
+// changeChannel(groupID,channelID){
+
+//   this.selectedChannel = channelID
+//   this.Groups[groupID]._activeChannel = channelID;
+  
+// }
 
 // Gets the best channel for the current group
 // This is called on the route and the function above
@@ -218,6 +251,10 @@ relaventChannel(groupID){
   return 0;
 }
 
+rightClick(){
+  console.log("Context Matters")
+  return false;
+}
 
 // This function gets the first letter of the first and second word
 // Creates an acronym for display

@@ -29,7 +29,7 @@ export class RoomComponent implements OnInit {
    this.paramsSubscribe=this.activatedRoute.params.subscribe(params => {
       this.channelID = params['channelID'];
       this.groupID = params['id'];
-      this.getGroup(this.groupID);
+     // this.getGroup(this.groupID);
     });
   }
 
@@ -46,16 +46,16 @@ addToGroup(groupID, userID){
   console.log(userID);
 }
 
-getGroup(id){
-   this.http.post(this.url+'/getGroup', { groupID: id } )
-      .subscribe(
-        res => {
-          this.currentGroup = res['currentGroup'];
-        },
-        err => {
-          console.log("Error occured");
-        }
-      );
-}
+// getGroup(id){
+//   this.http.post(this.url+'/getGroup', { groupID: id } )
+//       .subscribe(
+//         res => {
+//           this.currentGroup = res['currentGroup'];
+//         },
+//         err => {
+//           console.log("Error occured");
+//         }
+//       );
+// }
 
 }
