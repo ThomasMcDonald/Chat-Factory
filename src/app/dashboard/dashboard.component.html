@@ -7,7 +7,7 @@
         </button>
       </li>
       <li class="teams__item" *ngFor="let group of Groups; let i = index">
-        <button class="teams__button unselectable" [routerLink]="['group',group._id,'channel',group._activeChannel]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id,group._activeChannel)" (contextmenu)="rightClick()" [matTooltip]="group._name" matTooltipPosition="after">
+        <button class="teams__button unselectable" [routerLink]="['channels',group._id,group._activeChannel]" routerLinkActive="teams__button--active" (click)="selectGroupChannel(group._id,group._activeChannel)" (contextmenu)="rightClick()" [matTooltip]="group._name" matTooltipPosition="after">
           {{ groupAcronym(group._name) }}
         </button>
       </li>
@@ -39,7 +39,7 @@
       <ul class="channels__list"  *ngFor="let group of Groups">
         <ng-container *ngFor="let channel of group._channels">
           <li class="channels__item" *ngIf="channel._groupID == selectedGroup">
-            <button class="channels__button" [routerLink]="['group',selectedGroup,'channel',channel._id]" routerLinkActive="channels__button--active" (click)="selectedChannel = group._activeChannel = channel._id">
+            <button class="channels__button" [routerLink]="['channels',selectedGroup,channel._id]" routerLinkActive="channels__button--active" (click)="selectedChannel = group._activeChannel = channel._id">
               <span>{{channel._name}}</span>
               <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" mat-icon-button class="invite" matTooltip="Create Invite" matTooltipPosition="above" (click)="inviteToGroupChannel('Channel',channel?._id)"><mat-icon style="font-size:20px;">person_add</mat-icon></button>
             </button>
@@ -56,13 +56,12 @@
            <ng-container *ngFor="let channel of group._channels">
             <ng-container *ngIf="channel._id == selectedChannel">
               <h1 class="main__h1" >{{channel._name}}</h1>
-              <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" class="ion-android-close" [matMenuTriggerFor]="channelMenu"><mat-icon>settings</mat-icon></button>
             </ng-container>
           </ng-container>
         </ng-container>
         <ng-template #no_channel><h1 class="main__h1">No Channels Yet</h1></ng-template>
       </ng-container>
-
+    <button *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" class="ion-android-close" [matMenuTriggerFor]="channelMenu"><mat-icon>settings</mat-icon></button>
     </header>
     <div class="main__content">
       <div class="main__container">

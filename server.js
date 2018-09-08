@@ -1,5 +1,6 @@
 var express = require('express')
 var bodyParser = require('body-parser')
+var cors = require('cors')
 
 var app = express()
 var http = require('http').Server(app)
@@ -23,9 +24,11 @@ try {
 
 loadserverCache()
 
+
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyPaser);
+
 app.get('/', function(req,res){
     res.sendFile(express.static(__dirname + '/dist/Chat-Factory'));
 });
@@ -69,7 +72,7 @@ app.post('/createUser', function (req, res) {
     }
     Users.push(new User(userID,req.body.username.toLowerCase(),req.body.email,req.body.role,[],[]));
     res.send({statusCode: "User", msg: "User Created" })
-    io.emit('newUser',{users: Users})
+    io.emit('newData');
     fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     if (err) throw err;
 });
@@ -101,7 +104,7 @@ app.post('/createGroup', function (req, res) {
 
   Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner)); // Create Group
   Channels.push(new Channel(channelID,"General","General chat",GroupID,req.body.owner)); // Add Initial Channel
- 
+
   if(req.body.owner == 0){
     Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
     Users[req.body.owner]._inChannel.push(channelID);
@@ -306,7 +309,7 @@ io.on('connection', function(socket){
      currentUser = Users[userID];
      currentUser._socket = socket.id;
      userGroups = usersGroups(currentUser,Groups,Channels);
-    socket.emit('loginDetails',{groups: userGroups, users: Users})
+    socket.emit('updatedData',{groups: userGroups, users: Users})
   });
 
   socket.on('requestData', function(id){
@@ -314,11 +317,6 @@ io.on('connection', function(socket){
      userGroups = usersGroups(currentUser,Groups,Channels);
 
     socket.emit('updatedData',{groups: userGroups, users: Users})
-  });
-  
-  socket.on('user-reconnected', function (id) {
-     console.log(Users[id]._username + ' just reconnected');
-      Users[id]._socket = socket.id;
   });
 
   socket.on('disconnect', function(){
