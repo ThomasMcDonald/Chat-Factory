@@ -39,7 +39,14 @@ var server = app.listen(port, function () {
    console.log("Listening on %s", port)
 })
 var io = require('socket.io').listen(server);
+var stdin = process.openStdin();
 
+stdin.addListener("data", function(d) {
+    // note:  d is an object, and when converted to a string it will
+    // end with a linefeed.  so we (rather crudely) account for that
+    // with toString() and then trim()
+    io.emit('message', "yeet");
+  });
 
 
 // User Routes
@@ -90,9 +97,8 @@ app.post('/deleteUser', function (req, res) {
   res.send({statusCode: "Success", msg: "User Deleted" })
   io.emit('newData');
   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
-  if (err) throw err;
-});
-
+    if (err) throw err;
+  });
 });
 
 // Group routes
@@ -312,6 +318,26 @@ io.on('connection', function(socket){
     socket.emit('updatedData',{groups: userGroups, users: Users})
   });
 
+  socket.on('roomyMessage', function(content){
+    console.log(content)
+    io.in(content.room).emit('message',{status: "message", user: Users[userID], content: content.msg })
+  });
+
+  socket.on('subscribe', function(room) {
+        console.log('joining room', room);
+
+        messages = []; // This will eventually be populated with the channels messages from mongodb
+        socket.emit('message', {status: "channelContent", content: messages})
+        io.in(room).emit('message',{status: "joined", user: Users[userID] })
+        socket.join(room);
+    })
+
+  socket.on('unsubscribe', function(room) {
+        console.log('leaving room', room);
+        socket.leave(room);
+        io.in(room).emit('message',{status: "left", user: Users[userID] })
+    })
+
   socket.on('requestData', function(id){
      currentUser = Users[id];
      userGroups = usersGroups(currentUser,Groups,Channels);
@@ -326,22 +352,6 @@ io.on('connection', function(socket){
   });
 });
 
-// Filters the Channels array
-// Returns only the channels the user is in
-// function usersChannels(currentUser) {
-//   userChannels = [];
-//   if(currentUser._inChannel != undefined){
-//     for(var i=0;i<Channels.length;i++){
-//       for(var j=0;j<currentUser._inChannel.length;j++){
-//         if(currentUser._inChannel[j] == Channels[i]._id){
-//           userChannels.push(Channels[i]);
-//         }
-//       }
-//     }
-//   }
-//
-//   return userChannels;
-// }
 
 // Filters the Groups and Channels into a new Array
 function usersGroups(currentUser,groups,channels){

@@ -1,5 +1,9 @@
 <div>
-  <input class="search-bottom" placeholder="Message #pens" type="text" >
+  <form (submit)="sendMessage()">
+    <input class="search-bottom" placeholder="Message" [(ngModel)]="inputMessage" name="inputMessage" type="text" required>
+    <button type="submit" style="display:none">hidden submit</button>
+  </form>
+  <p>{{groupID}} - {{channelID}} </p>
 </div>
 
 <style>

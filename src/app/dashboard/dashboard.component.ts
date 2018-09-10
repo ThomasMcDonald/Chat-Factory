@@ -27,7 +27,6 @@ export class DashboardComponent implements OnInit {
   }
 
   sub: Subscription;
-  sub2: Subscription;
   private socket;
   public userDetails;
   public Groups = [];
@@ -64,7 +63,8 @@ export class DashboardComponent implements OnInit {
   // Logs the user out and removes the local storage containing the user details
   logout() {
     this.dataService.removeCurrentUserStorage();
-    this.socket.disconnect();
+    this.socketService.logout();
+    this.socketService.leaveRoom(this.selectedChannel);
     this.router.navigate(['/login']);
   }
 

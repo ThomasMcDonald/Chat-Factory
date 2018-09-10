@@ -12,7 +12,8 @@ import io from "socket.io-client";
 export class SocketService {
 
   private socket;
-  observer: Observer<any>;
+  dataObserver: Observer<any>;
+  messageObserver: Observer<any>;
   public userDetails;
   public Groups = [];
   public Channels = [];
@@ -25,9 +26,6 @@ export class SocketService {
 
   constructor(private http: HttpClient, private dataService: DataService) {
     this.getCurrentUser();
-
-
-
 }
 
   // Connect Socket
@@ -45,21 +43,38 @@ export class SocketService {
     this.socket.emit("loginSetup",this.userDetails._id);
   }
 
+  public logout(){
+    this.socket.disconnect();
+  }
+
+  public joinRoom(room) {
+    this.socket.emit('subscribe', room);
+  }
+
+  public leaveRoom(room) {
+    this.socket.emit('unsubscribe', room);
+  }
+
+  public sendMessage(room,msg){
+    this.socket.emit("roomyMessage",{room:room, msg:msg})
+  }
 
   updateData(): Observable<any> {
    this.socket.on('updatedData', (res) => {
-     console.log(res);
-     this.observer.next(res);
+     this.dataObserver.next(res);
    });
-
-   return this.createObservable();
+   return new Observable(dataObserver => {
+     this.dataObserver = dataObserver;
+   });
  }
 
-
- createObservable() : Observable<any> {
-     return new Observable(observer => {
-       this.observer = observer;
-     });
+ getMessages(): Observable<any> {
+   this.socket.on('message', (message) => {
+     this.messageObserver.next(message);
+   });
+   return new Observable(messageObserver => {
+     this.messageObserver = messageObserver;
+   });
  }
 
  private handleError(error) {
