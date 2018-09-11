@@ -46,6 +46,7 @@ export class LoginComponent implements OnInit {
     this.http.post(this.url+'/loginVerify', this.userDetails.value) // Sending password with no hash ;)
       .subscribe(
         res => {
+          console.log(res['user'])
           if(res['statusCode'] == "initiateSocket"){
             localStorage.setItem('UserDetails', JSON.stringify(res['user']));
             this.router.navigate(['/dashboard']);
