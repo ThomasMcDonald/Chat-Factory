@@ -25,13 +25,13 @@ export class SocketService {
 
 
   constructor(private http: HttpClient, private dataService: DataService) {
-    this.getCurrentUser();
+    
 }
 
   // Connect Socket
   public initSocket(){
     this.socket = io.connect(this.url);
-
+    this.getCurrentUser();
     this.socket.on('newData', (res) => {
       this.socket.emit("requestData",this.userDetails._id);
     });
@@ -48,11 +48,15 @@ export class SocketService {
   }
 
   public joinRoom(room) {
-    this.socket.emit('subscribe', room);
+    if(room != 0){
+      this.socket.emit('subscribe', room);
+    }
   }
 
   public leaveRoom(room) {
-    this.socket.emit('unsubscribe', room);
+    if(room != 0){
+      this.socket.emit('unsubscribe', room);
+    }
   }
 
   public sendMessage(room,msg){

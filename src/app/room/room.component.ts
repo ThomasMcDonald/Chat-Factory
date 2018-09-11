@@ -36,13 +36,13 @@ export class RoomComponent implements OnInit {
     this.getCurrentUser();
    this.paramsSubscribe=this.activatedRoute.params.subscribe(params => {
       this.socketService.leaveRoom(this.channelID);
+      
       this.channelID = params['channelID'];
       this.groupID = params['id'];
       this.messages = [];
-
-      if(this.channelID != 0){
-        this.socketService.joinRoom(this.channelID);
-      }
+      
+      this.socketService.joinRoom(this.channelID);
+      
 
 
     });

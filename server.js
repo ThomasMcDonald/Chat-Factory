@@ -314,6 +314,7 @@ io.on('connection', function(socket){
      userID = id;
      currentUser = Users[userID];
      currentUser._socket = socket.id;
+     console.log(currentUser);
      userGroups = usersGroups(currentUser,Groups,Channels);
     socket.emit('updatedData',{groups: userGroups, users: Users})
   });
