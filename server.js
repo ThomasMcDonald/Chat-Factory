@@ -22,21 +22,21 @@ var Users = [];
 // Database connection: (Change this to what your database URL is!)
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chatFactory',{ useNewUrlParser: true });
 var db = mongoose.connection;
-	require('./server/utils/database.js')(chalk, db);
+	require(__dirname + '/server/Utils/database.js')(chalk, db);
 
 	var models = {
 		mongoose: mongoose,
-		user: require('./server/models/users')(mongoose,bcrypt),
-    group: require('./server/models/groups')(mongoose,bcrypt),
-    channel: require('./server/models/channels')(mongoose,bcrypt),
+		user: require(__dirname + '/server/models/users')(mongoose,bcrypt),
+    group: require(__dirname + '/server/models/groups')(mongoose,bcrypt),
+    channel: require(__dirname + '/server/models/channels')(mongoose,bcrypt),
     //messages: require('./server/models/messages')(mongoose,bcrypt)
 	};
 	//Controllers - database functions
 	var controller = {
-		user: require('./server/controllers/users')(models, logger,jwt,bcrypt),
-    group: require('./server/controllers/groups')(models, logger,jwt,bcrypt),
-    channel: require('./server/controllers/channels')(models, logger,jwt,bcrypt),
-    message: require('./server/controllers/messages')(models, logger,jwt,bcrypt)
+		user: require(__dirname + '/server/controllers/users')(models, logger,jwt,bcrypt),
+    group: require(__dirname + '/server/controllers/groups')(models, logger,jwt,bcrypt),
+    channel: require(__dirname + '/server/controllers/channels')(models, logger,jwt,bcrypt),
+    message: require(__dirname + '/server/controllers/messages')(models, logger,jwt,bcrypt)
 	};
 
 app.use(express.static(__dirname + '/dist/Chat-Factory'));
@@ -55,7 +55,13 @@ var server = app.listen(port, function () {
 var io = require('socket.io').listen(server);
 
 console.log("////Initial Setup//////")
-controller.user.createUser({_email:"super@gmail.com",_username:"super",_password:"Super",_role: "Super",_inChannel:[],_inGroup:[]})
+
+// (async function(){
+//       return await controller.user.createUser({_email:"super1@gmail.com",_username:"supe1r",_password:"Super",_role: "Super",_inChannel:[],_inGroup:[]})
+//     })().then(result =>{
+//       console.log(result);
+//     });
+
 console.log("///////////////////////")
 
 //
@@ -63,14 +69,21 @@ console.log("///////////////////////")
 //
 // // Verify the login details provided with the User Array. There is no actual authentication, just check if username exists in array.
 app.post('/loginVerify', function (req, res) {
-  controller.user.loginVerify(req.body,res);
+  (async function(req,res){
+     return await controller.user.loginVerify(req.body,res);
+  })(req,res).then(result =>{
+    res.send(result);
+  })
 })
 
 // // Create new user function, will throw error if user already exists
 app.post('/createUser', function (req, res) {
-    controller.user.createUser({_email:req.body.email,_username:req.body.username.toLowerCase(),_password:"Super",_role: req.body.role,_inChannel:[],_inGroup:[]})
-    //res.send({statusCode: "User", msg: "User Created" })
-    //io.emit('newData');
+    (async function(req,res){
+       return await  controller.user.createUser({_email:req.body.email,_username:req.body.username.toLowerCase(),_password:"Super",_role: req.body.role,_inChannel:[],_inGroup:[]})
+    })(req,res).then(result =>{
+      res.send(result);
+      io.emit('newData');
+    })
 });
 //
 // // Delete given User
@@ -94,9 +107,14 @@ app.post('/createUser', function (req, res) {
 //
 // Create Group
 app.post('/createGroup', function (req, res) {
-
-    controller.group.createGroup(req.body.owner,{_name: req.body.name, _topic:req.body.topic},{_name: "General", _topic:"General chat"},res)
-
+     (async function(req,res){
+       return await controller.group.createGroup(req.body.owner,{_name: req.body.name, _topic:req.body.topic},{_name: "General", _topic:"General chat"});
+    })(req,res).then(result =>{
+      res.send(result);
+    });
+    
+    
+     
 //   GroupID = Math.floor(100000 + Math.random() * 900000);
 //   channelID = Math.floor(100000 + Math.random() * 900000);
 //
@@ -116,6 +134,7 @@ app.post('/createGroup', function (req, res) {
 //   res.send({statusCode: "Success", msg: "Group Created" })
 //   io.emit('newData');
 });
+
 //
 // // Get Group by ID
 // app.post('/getGroup', function (req, res) {
@@ -300,8 +319,29 @@ io.on('connection', function(socket){
   var userID;
   var currentUser;
   socket.on('loginSetup', function(id){
-     userID = id;
-     controller.user.getRelevantData(userID,socket);
+      userID = id;
+      
+     (async function(id){
+       return await controller.user.getRelevantData(id);
+    })(id).then(result =>{
+      var groups = [];
+      for(var i = 0;i<result.groups.length;i++){
+        groups.push(result.groups[i]);
+        groups[i]['_channels'] = []
+        for(var j =0;j<result.channels.length;j++){
+           if(result.groups[i]._id.equals(result.channels[j]._groupID)){
+             groups[i]['_channels'].push(result.channels[j]);
+           }
+           }
+           console.log(groups[i]['_channels'])
+            if(groups[i]['_channels'].length > 0) {
+               groups[i]['_activeChannel'] = groups[i]['_channels'][0]._id;
+            }
+          
+        }
+      console.log(groups)  
+      socket.emit('updatedData',{groups: groups, users: Users})
+    });
   });
 
   socket.on('roomyMessage', function(content){
@@ -368,35 +408,4 @@ function usersGroups(currentUser,groups,channels){
   }
 
   return temp;
-}
-
-//
-// Reads in the server data and assigns the contents to the appropriate variables
-// Loop over the Users array to remove any socket data that may be present, no socket connections will be present when server is starting up.
-//
-function loadserverCache () {
-    var data = fs.readFileSync('./server/Utils/serverCache.txt','utf8')
-    if(data == '') {
-         Users.push(new User(0,"super","super@gmail.com","Super",[],[]));
-        // Users.push(new User(1,"default","default@gmail.com","Regular",[],[]));
-        // Groups.push(new Group(0,"Calamari Race Team","Squad Tings",0));
-        // Channels.push(new Channel(0,"General","General Chat",0,0));
-
-        fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
-        if (err) throw err;
-      });
-        return { Users, Groups, Channels };
-    }
-
-    data = JSON.parse(data)
-    Groups = data.groups;
-    Channels = data.channels;
-    Users = data.users;
-
-    for(var i=0;i<Users.length;i++){
-        if(Users[i]._socket !== undefined){
-            delete Users[i]._socket;
-          }
-      }
-      return { Users, Groups, Channels };
 }

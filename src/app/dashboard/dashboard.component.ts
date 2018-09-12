@@ -44,6 +44,7 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     this.sub = this.socketService.updateData()
       .subscribe(quote => {
+        console.log(quote)
         this.dataService.Groups = this.Groups = quote.groups;
         this.dataService.Users = this.Users = quote.users;
 

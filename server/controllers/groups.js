@@ -5,7 +5,8 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		// Create Group and Add a default channel to the group and the group creator to that group and channel
 
 		// Still need to check if owner is super user or not, if not Super user needs to be added to group and channel
-		createGroup: function(owner,group,channel,res) {
+		createGroup: function(owner,group,channel) {
+		return new Promise(function (resolve, reject) {
 			var newGroup = new models.group(group);
 					newGroup.save(function (error) {
 						if (error) {
@@ -29,9 +30,10 @@ module.exports = function(models, logger,jwt,bcrypt) {
 								}
 							});
 							console.log("Group Added");
-						return res.send({statusCode: "Success", msg: "Group Created" })
+						resolve({statusCode: "Success", msg: "Group Created" })
 					}
 					});
+			});
 			}
 		}
 };

@@ -3,32 +3,37 @@ module.exports = function(models, logger,jwt,bcrypt) {
 	return {
 
 
-    loginVerify: function(data,callback){
-      console.log(data.username);
-      models.user.findOne({ _username: data.username }).exec(function (err, user) {
-       if (err) {
-         console.log(err);
-       } else if (!user) {
-        return callback.send({ statusCode: "Error", msg: 'User not found.'});
-       }
-
-       bcrypt.compare(data.password, user._password, function (err, result) {
-         if (result === true) {
-           const JWTToken = jwt.sign({
-             email: data.email,
-             _id: user._id
-           },
-           'secret',
-           {
-           expiresIn: '2h'
-           });
-           console.log("User Found")
-           return callback.send({ token: JWTToken, user: user, statusCode: "initiateSocket" })
-         } else {
-        return callback.send({ statusCode: "Error", msg: "Email or Password is incorrect" });
-         }
-       })
-     });
+    	loginVerify: async function(data,callback){
+	    	return new Promise(function (resolve, reject) {
+		      console.log(data.username);
+		      models.user.findOne({ _username: data.username }).exec(function (err, user) {
+		       if (err) {
+		         console.log(err);
+		       } else if (!user) {
+		       	resolve({ statusCode: "Error", msg: 'User not found.'})
+		       // return callback.send({ statusCode: "Error", msg: 'User not found.'});
+		       }
+		
+		       bcrypt.compare(data.password, user._password, function (err, result) {
+		         if (result === true) {
+		           const JWTToken = jwt.sign({
+		             email: data.email,
+		             _id: user._id
+		           },
+		           'secret',
+		           {
+		           expiresIn: '2h'
+		           });
+		           console.log("User Found")
+		           resolve({ token: JWTToken, user: user, statusCode: "initiateSocket" })
+		           //return callback.send({ token: JWTToken, user: user, statusCode: "initiateSocket" })
+		         } else {
+		         	resolve({ statusCode: "Error", msg: "Email or Password is incorrect" });
+		        //return callback.send({ statusCode: "Error", msg: "Email or Password is incorrect" });
+		         }
+		       })
+		     });
+    	});
    },
 		/*
 		 * Find Users and Update
@@ -62,41 +67,60 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		/*
 		 * Find Users By Id
 		 */
-		getRelevantData: function(id, callback) {
-			models.user.findById(id, function(error, user) {
-				if (error) {
-					logger.info('Users', error);
-				}else if(user){
-        console.log(user)
-        callback.emit('updatedData',{groups: [], users: []})
-      }else{
-        console.log("What the fuck");
-      }
+		getRelevantData: async function(id) {
+			return new Promise(function (resolve, reject) {
+			  models.user.findOne({ _id: id }).exec(function (err, user) {
+			       if (err) {
+			         console.log(err);
+			       } else if (user) {
+			       	models.group.find({"_id" : {"$in" : user._inGroup}},function(error, groups){
+					    if(error)
+						    { // need to check if data is legit or not here
+						       console.log(error);
+						    }
+					    else
+					    	{
+						    	models.channel.find({"_groupID" : {"$in": groups}},function(error, channels){ 
+							    if(error)
+								    { // need to check if data is legit or not here
+								       console.log(error);
+								    }
+							    else
+								    {
+								    	 resolve({groups: groups, channels:channels, currentUser: user});
+								    }
+					    		});
+					       
+					    }
+					});
+			       }
+				});
 			});
 		},
 
 		/*
 		 * Create New Users
 		 */
-		createUser: function(data) {
-			console.log(data);
-			var newUser = new models.user(data);
-      models.user.findOne({ _username: data._username }).exec(function (err, user) {
-        if (err) {
-          	console.log(err)
-        }else if(user == null){
-          newUser.save(function (error) {
-            if (error) {
-            	console.log(error)
-            }else{
-          	console.log("User Added");
-					}
-          });
-        }else if(user != null){
-          console.log("User Already Exists");
-        }
-
-      });
+		createUser: async function(data) {
+			return new Promise(function (resolve, reject) {
+				console.log(data);
+				var newUser = new models.user(data);
+		    	models.user.findOne({ _username: data._username }).exec(function (err, user) {
+		        if (err) {
+		          	console.log(err)
+		        }else if(user == null){
+		          newUser.save(function (error) {
+		            if (error) {
+		            	console.log(error)
+		            }else{
+		          	resolve({statusCode: "User", msg: "User Created" });
+							}
+		          });
+		        }else if(user != null){
+		          resolve({statusCode: "UserError", msg: "User Already Exists" })
+		        }
+		    });
+    	});
 
 
 		},
