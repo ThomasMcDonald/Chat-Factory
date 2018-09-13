@@ -33,7 +33,9 @@ export class SocketService {
     this.socket = io.connect(this.url);
     this.getCurrentUser();
     this.socket.on('newData', (res) => {
-      this.socket.emit("requestData",this.userDetails._id);
+      if(res.owner == this.userDetails._id){
+        this.socket.emit("requestData",this.userDetails._id);
+      }
     });
 
     this.loginSetup();

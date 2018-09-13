@@ -13,6 +13,8 @@ var http = require('http').Server(app)
 var bodyPaser = bodyParser.json()
 const fs = require('fs');
 var port = process.env.PORT || 8080;
+var activeData = require(__dirname + '/server/Utils/database.js');
+
 
 // Database connection: (Change this to what your database URL is!)
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/chatFactory',{ useNewUrlParser: true });
@@ -53,9 +55,14 @@ var io = require('socket.io').listen(server);
 require(__dirname + '/server/Utils/sockets')(models, controller, app, io)
 require(__dirname + '/server/Utils/routes')(models, controller, app, express, io)
 
-
+setupData();
 // (async function(){
 //       return await controller.user.createUser({_email:"super1@gmail.com",_username:"supe1r",_password:"Super",_role: "Super",_inChannel:[],_inGroup:[]})
 //     })().then(result =>{
 //       console.log(result);
 //     });
+
+
+async function setupData(){
+    return await controller.user.createUser({_email:"super@gmail.com",_username:"super",_password:"Super",_role: "Super",_inChannel:[],_inGroup:[]})
+}

@@ -16,7 +16,8 @@ var groupSchema =  mongoose.Schema({
     type: Array
   },
   _activeChannel: {
-    type: Number
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Channel',
   }
 });
 

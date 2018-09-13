@@ -49,7 +49,7 @@ export class DashboardComponent implements OnInit {
         this.dataService.Users = this.Users = quote.users;
 
         if (this.Groups.length > 0 && this.selectedChannel == 0 && this.selectedGroup == 0) {
-          this.selectedChannel = this.Groups[0]._activeChannel
+          this.selectedChannel = this.Groups[0]._activeChannel;
           this.selectedGroup = this.Groups[0]._id;
           this.router.navigate(['dashboard', 'channels', this.selectedGroup, this.selectedChannel]);
         }

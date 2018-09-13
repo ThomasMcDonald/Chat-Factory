@@ -9,23 +9,11 @@ module.exports = function(models,controller, app, io) {
       
       socket.on('loginSetup', function(id){
           userID = id;
-          
+          //Users.push({_id: userID, _socket: socket.id})
          (async function(id){
            return await controller.user.getRelevantData(id);
         })(id).then(result =>{
-          var groups = [];
-          for(var i = 0;i<result.groups.length;i++){
-            groups.push(result.groups[i]);
-            for(var j =0;j<result.channels.length;j++){
-               if(result.groups[i]._id.equals(result.channels[j]._groupID)){
-                 groups[i]['_channels'].push(result.channels[j]);
-               }
-               }
-                if(groups[i]['_channels'].length > 0) {
-                   groups[i]['_activeChannel'] = groups[i]['_channels'][0]._id;
-                }
-              
-            }
+          var groups = relevantData(result)
           socket.emit('updatedData',{groups: groups, users: Users})
         });
       });
@@ -56,8 +44,12 @@ module.exports = function(models,controller, app, io) {
     
       socket.on('requestData', function(id){
          currentUser = Users[id];
-        
-       // socket.emit('updatedData',{groups: userGroups, users: Users})
+        (async function(id){
+           return await controller.user.getRelevantData(id);
+        })(id).then(result =>{
+          var groups = relevantData(result)
+          socket.emit('updatedData',{groups: groups, users: Users})
+        });
       });
     
       socket.on('disconnect', function(){
@@ -67,5 +59,20 @@ module.exports = function(models,controller, app, io) {
 });
 
 
-    
+    function relevantData(result){
+        var groups = []
+        for(var i = 0;i<result.groups.length;i++){
+            groups.push(result.groups[i]);
+            for(var j =0;j<result.channels.length;j++){
+               if(result.groups[i]._id.equals(result.channels[j]._groupID)){
+                 groups[i]['_channels'].push(result.channels[j]);
+               }
+               }
+                if(groups[i]['_channels'].length > 0) {
+                    groups[i]['_activeChannel'] = groups[i]['_channels'][0]._id;
+                }
+              
+            }
+            return groups;
+    }
 };

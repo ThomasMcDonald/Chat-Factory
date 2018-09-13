@@ -29,6 +29,7 @@ module.exports = function(models,controller, app, express, io) {
           io.emit('newData');
         })
     });
+    
     //
     // // Delete given User
     // app.post('/deleteUser', function (req, res) {
@@ -52,9 +53,10 @@ module.exports = function(models,controller, app, express, io) {
     // Create Group
     app.post('/createGroup', function (req, res) {
          (async function(req,res){
-           return await controller.group.createGroup(req.body.owner,{_name: req.body.name, _topic:req.body.topic},{_name: "General", _topic:"General chat",_channels: []});
+           return await controller.group.createGroup(req.body.owner,{_name: req.body.name, _topic:req.body.topic,_channels: []},{_name: "General", _topic:"General chat"});
         })(req,res).then(result =>{
           res.send(result);
+          io.emit('newData',{owner:req.body.owner});
         });
         
         
