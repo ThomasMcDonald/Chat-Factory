@@ -73,7 +73,7 @@ module.exports = function(models, logger,jwt,bcrypt) {
 			       if (err) {
 			         console.log(err);
 			       } else if (user) {
-			       	models.group.find({"_id" : {"$in" : user._inGroup}},function(error, groups){
+			       	models.group.find({"_id" : {"$in" : user._inGroup}},function(error, groups){ // finds all groups where the groups id is in the _inGroup[] array of user
 					    if(error)
 						    { // need to check if data is legit or not here
 						       console.log(error);

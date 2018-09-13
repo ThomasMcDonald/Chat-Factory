@@ -11,6 +11,12 @@ var groupSchema =  mongoose.Schema({
     type: String,
     required: true,
     trim: true
+  },
+  _channels:{
+    type: Array
+  },
+  _activeChannel: {
+    type: Number
   }
 });
 

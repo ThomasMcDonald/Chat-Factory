@@ -22,7 +22,7 @@ export class RoomComponent implements OnInit {
   inputMessage = "";
 
   paramsSubscribe;
-  messages = [];
+  Messages = [];
   get Users():any[] {
     return this.dataService.Users;
   }
@@ -39,7 +39,7 @@ export class RoomComponent implements OnInit {
       
       this.channelID = params['channelID'];
       this.groupID = params['id'];
-      this.messages = [];
+      this.Messages = [];
       
       this.socketService.joinRoom(this.channelID);
       
@@ -59,15 +59,15 @@ export class RoomComponent implements OnInit {
                   }
                   break;
             case "channelContent":
-                  this.messages = message.content;
-                  console.log(this.messages);
+                  this.Messages = message.content;
+                  console.log(this.Messages);
                   break;
             case "left":
                   console.log(message.user._username + " Has Left the Channel")
                   break;
             case "message":
-                  this.messages.push({from:message.user, msg:message.content});
-                  console.log(this.messages);
+                  this.Messages.push({from:message.user, _content:message.content});
+                  console.log(this.Messages);
                   break;
           }
           //messages.push(messages);
@@ -76,8 +76,12 @@ export class RoomComponent implements OnInit {
   }
   //Send message to server for room distribution
   sendMessage(){
-    this.socketService.sendMessage(this.channelID,this.inputMessage);
-    this.inputMessage = "";
+    if(this.inputMessage.localeCompare("") != 0 || this.inputMessage.localeCompare(" ") != 0){
+      this.socketService.sendMessage(this.channelID,this.inputMessage);
+      this.inputMessage = "";
+    }else{
+      console.log("no empty messages please")
+    }
   }
   // Observable to keep track of the current user.
   getCurrentUser(): void {

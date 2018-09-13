@@ -4,6 +4,12 @@
     <button type="submit" style="display:none">hidden submit</button>
   </form>
   <p>{{groupID}} - {{channelID}} </p>
+  
+  <ul>
+    <li *ngFor="let message of Messages">
+      {{message._content}}
+    </li>
+  </ul>
 </div>
 
 <style>
