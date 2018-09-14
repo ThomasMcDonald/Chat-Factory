@@ -1,13 +1,13 @@
 module.exports = function(models,controller, app, express, io) {
-    
-    
+
+
     console.log("Routes Module Loaded")
-    
+
     app.get('/', function(req,res){
      res.sendFile(express.static(__dirname + '/dist/Chat-Factory'));
     });
-    
-    
+
+
     //
     // // User Routes
     //
@@ -19,7 +19,7 @@ module.exports = function(models,controller, app, express, io) {
         res.send(result);
       })
     })
-    
+
     // // Create new user function, will throw error if user already exists
     app.post('/createUser', function (req, res) {
         (async function(req,res){
@@ -29,7 +29,7 @@ module.exports = function(models,controller, app, express, io) {
           io.emit('newData');
         })
     });
-    
+
     //
     // // Delete given User
     // app.post('/deleteUser', function (req, res) {
@@ -47,7 +47,7 @@ module.exports = function(models,controller, app, express, io) {
     //   });
     // });
     //
-    
+
     // // Group routes
     //
     // Create Group
@@ -58,34 +58,8 @@ module.exports = function(models,controller, app, express, io) {
           res.send(result);
           io.emit('newData',{owner:req.body.owner});
         });
-        
-        
-         
-    //   GroupID = Math.floor(100000 + Math.random() * 900000);
-    //   channelID = Math.floor(100000 + Math.random() * 900000);
-    //
-    //   Groups.push(new Group(GroupID,req.body.name,req.body.topic,req.body.owner)); // Create Group
-    //   Channels.push(new Channel(channelID,"General","General chat",GroupID,req.body.owner)); // Add Initial Channel
-    //
-    //   if(req.body.owner == 0){
-    //     Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
-    //     Users[req.body.owner]._inChannel.push(channelID);
-    //   }else{
-    //     Users[req.body.owner]._inGroup.push(GroupID); // Add group creator to Group
-    //     Users[req.body.owner]._inChannel.push(channelID);
-    //     Users[0]._inGroup.push(GroupID); // Super user Additions
-    //     Users[0]._inChannel.push(channelID);
-    //   }
-    //
-    //   res.send({statusCode: "Success", msg: "Group Created" })
-    //   io.emit('newData');
     });
-    
-    //
-    // // Get Group by ID
-    // app.post('/getGroup', function (req, res) {
-    //      return res.send({ currentGroup: Groups[req.body.groupID], statusCode: "Success" })
-    // });
+
     //
     // // Remove given Group, Channels within that group, and inChannel elements in the User array
     // app.post('/removeGroup', function (req, res) {
@@ -216,27 +190,18 @@ module.exports = function(models,controller, app, express, io) {
     //
     // // Channel Routes
     //
-    // // Create Channel
-    // app.post('/createChannel', function (req, res) {
-    //   channelID = Math.floor(100000 + Math.random() * 900000);
-    //
-    //   Channels.push(new Channel(channelID,req.body.name,req.body.topic,req.body.groupID,req.body.owner));
-    //   if(req.body.owner == 0){
-    //     Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
-    //   }else{
-    //     Users[req.body.owner]._inChannel.push(channelID); // Adds user that created channel into channel
-    //     Users[0]._inChannel.push(channelID); // Super User additions
-    //   }
-    //
-    //   res.send({statusCode: "Success", msg: "Channel Created" })
-    //   io.emit('newData');
-    //   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
-    //   if (err) throw err;
-    //   });
-    // });
-    //
+    // Create Channel
+    app.post('/createChannel', function (req, res) {
+      (async function(req,res){
+        return await controller.channel.createChannel({_name:req.body.name, _topic:req.body.topic, _groupID: req.body.groupID}, req.body.groupID);
+     })(req,res).then(result =>{
+       res.send(result);
+       io.emit('newData',{owner:req.body.owner});
+     });
+    });
+
     // // Remove Given Channel
-    // app.post('/removeChannel', function (req, res) {
+    app.post('/removeChannel', function (req, res) {
     //   for(var i=0;i<Users.length;i++){
     //     for(var j=0;j<Users[i]._inChannel.length;j++){
     //         if(Users[i]._inChannel[j] == req.body.channelID){
@@ -256,7 +221,7 @@ module.exports = function(models,controller, app, express, io) {
     //     fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     //     if (err) throw err;
     //   });
-    // });
+    });
     //
     //
 };
