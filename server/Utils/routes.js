@@ -30,10 +30,9 @@ module.exports = function(models,controller, app, express, io) {
         })
     });
 
-    //
+
     // // Delete given User
-    // app.post('/deleteUser', function (req, res) {
-    //
+    app.post('/deleteUser', function (req, res) {
     //   for(var i=0;i<Users.length;i++){
     //     if(Users[i]._id == req.body.userID){
     //       Users.splice(req.body.userID,1);
@@ -45,8 +44,8 @@ module.exports = function(models,controller, app, express, io) {
     //   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     //     if (err) throw err;
     //   });
-    // });
-    //
+    });
+
 
     // // Group routes
     //
@@ -62,7 +61,7 @@ module.exports = function(models,controller, app, express, io) {
 
     //
     // // Remove given Group, Channels within that group, and inChannel elements in the User array
-    // app.post('/removeGroup', function (req, res) {
+     app.post('/removeGroup', function (req, res) {
     //   removedGroup = req.body._groupID;
     //   removedChannels = [];
     //
@@ -102,12 +101,11 @@ module.exports = function(models,controller, app, express, io) {
     //   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     //   if (err) throw err;
     // });
-    // });
-    //
-    //
+     });
+
     // // Remove the given user from the given group or channel
     // // dependent on option given
-    // app.post('/removeUserFromGroupChannel', function(req, res){
+    app.post('/removeUserFromGroupChannel', function(req, res){
     //   removedGroupChannel = req.body.removeID;
     //   option = req.body.option;
     //   userID = req.body.userID;
@@ -147,11 +145,11 @@ module.exports = function(models,controller, app, express, io) {
     //   fs.writeFile('./server/Utils/serverCache.txt', JSON.stringify({groups: Groups, channels: Channels, users: Users}), (err) => {
     //   if (err) throw err;
     //   });
-    // });
+     });
     //
     // // Add user to either a Group or a channel, in most cases if a user is added to a channels
     // // They will be added to the Group as well, this is for potential error handling
-    // app.post('/addUsertoGroupChannel', function (req, res) {
+     app.post('/addUsertoGroupChannel', function (req, res) {
     //   groupChannelID = req.body.channelID;
     //   userID = req.body.userID;
     //   option = req.body.option
@@ -186,7 +184,9 @@ module.exports = function(models,controller, app, express, io) {
     //     if (err) throw err;
     //     });
     //
-    // });
+     });
+
+
     //
     // // Channel Routes
     //
@@ -202,6 +202,12 @@ module.exports = function(models,controller, app, express, io) {
 
     // // Remove Given Channel
     app.post('/removeChannel', function (req, res) {
+      (async function(req,res){
+        return await controller.channel.removeChannel(req.body.channelID,req.body.groupID);
+      })(req,res).then(result =>{
+        res.send(result);
+        io.emit('newData',{owner:"All"});
+      });
     //   for(var i=0;i<Users.length;i++){
     //     for(var j=0;j<Users[i]._inChannel.length;j++){
     //         if(Users[i]._inChannel[j] == req.body.channelID){
@@ -222,6 +228,4 @@ module.exports = function(models,controller, app, express, io) {
     //     if (err) throw err;
     //   });
     });
-    //
-    //
 };

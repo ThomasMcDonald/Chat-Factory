@@ -79,7 +79,7 @@
 
   <mat-menu #channelMenu="matMenu">
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="deleteGroup(selectedGroup)">Delete Entire Group</button>
-    <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="removeChannel(selectedChannel)">Delete Current Channel</button>
+    <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" (click)="removeChannel(selectedChannel,selectedGroup)">Delete Current Channel</button>
     <button mat-menu-item *ngIf="userDetails._role == 'Super' || userDetails._role == 'Group'" [matMenuTriggerFor]="removeUser">Remove From:</button>
   </mat-menu>
 

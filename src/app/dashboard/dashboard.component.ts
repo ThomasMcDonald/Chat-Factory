@@ -133,8 +133,8 @@ export class DashboardComponent implements OnInit {
 
 
   // HTTP request to remove the requested channel
-  removeChannel(id) {
-    this.http.post(this.url + '/removeChannel', { channelID: id })
+  removeChannel(channelID, selectedGroup) {
+    this.http.post(this.url + '/removeChannel', { channelID: channelID, groupID: selectedGroup })
       .subscribe(
         res => {
           if (res['statusCode'] == "Success") {

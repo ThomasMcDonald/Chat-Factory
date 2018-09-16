@@ -20,6 +20,25 @@ module.exports = function(models, logger,jwt,bcrypt) {
 					}
 				});
 			});
+		},
+
+		removeChannel: async function(channelID,groupID){
+			return new Promise(function (resolve, reject) {
+				models.channel.findByIdAndRemove(channelID, function(err) {
+						if (err) throw err;
+						else {
+							models.group.findByIdAndUpdate(groupID,{$pull:{_channels: channelID}},function(error){
+								if (error) throw error;
+								else {
+									resolve({statusCode: "Success", msg: "Channel Deleted" });
+								}
+							});
+						}
+				});
+			});
 		}
+
+
+
 	}
 }
