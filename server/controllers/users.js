@@ -13,7 +13,7 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		       	resolve({ statusCode: "Error", msg: 'User not found.'})
 		       // return callback.send({ statusCode: "Error", msg: 'User not found.'});
 		       }
-		
+
 		       bcrypt.compare(data.password, user._password, function (err, result) {
 		         if (result === true) {
 		           const JWTToken = jwt.sign({
@@ -35,12 +35,67 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		     });
     	});
    },
+
+	 /*
+	 Add user to Group
+	 */
+	 addUsertoGroup: async function(userID, groupID){
+		 return new Promise(function(resolve, reject){
+			 models.user.findByIdAndUpdate(userID, { $push: {'_inGroup': groupID}}, function(error, number, raw) {
+				 if (error) {
+					 logger.info('Users', error);
+				 }else{
+					 resolve({statusCode: "Success", msg: "User added to Group" });
+					 console.log("User Added to Group")
+				 }
+			 });
+		 });
+	 },
+
+	 // Remove user from Group
+	 removeUserfromGroup: async function(userID, groupID){
+		 return new Promise(function(resolve, reject){
+			 models.user.findByIdAndUpdate(userID,{ $pop: {'_inGroup': groupID}}, function(error,number,raw){
+				 if(error){
+					 console.log(error)
+				 }else{
+					 resolve({statusCode: "Success", msg: "Group Removed" })
+				 }
+			 });
+		 });
+	 },
+
+	 // Remove user from Channel
+	 addUsertoChannel: async function(userID, channelID){
+		 return new Promise(function(resolve,reject){
+			 models.user.findByIdAndUpdate(userID, { $push: {'_inChannel': channelID}}, function(error, number, raw) {
+				 if (error) {
+					 logger.info('Users', error);
+				 }else{
+					 resolve({statusCode: "Success", msg: "User added to Channel" });
+					 console.log("User Added to Channel")
+				 }
+			 });
+		 });
+	 },
+
+	 removeUserFromChannel: async function(userID, channelID){
+		 return new Promise(function(resolve, reject){
+			 models.user.findByIdAndUpdate(userID,{ $pop: {'_inChannel': channelID}}, function(error,number,raw){
+				 if(error){
+					 console.log(error)
+				 }else{
+					 resolve({statusCode: "Success", msg: "Group Removed" })
+				 }
+			 });
+		 });
+	 },
+
 		/*
 		 * Find Users and Update
 		 */
-
 		updateUser: function(id, data) {
-			models.users.findByIdAndUpdate(id, data, function(error, number, raw) {
+			models.user.findByIdAndUpdate(id, data, function(error, number, raw) {
 				if (error) {
 					logger.info('Users', error);
 				}
@@ -55,12 +110,14 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		/*
 		 * Get All Users
 		 */
-		getUsers: function(callback) {
-			models.user.find({}, function(error, users) {
-				if (error) {
-					logger.info('items', error);
-				}
-				callback(users);
+		getUsers: async function(callback) {
+			return new Promise(function(resolve,reject){
+				models.user.find({}, function(error, users) {
+					if (error) {
+						logger.info('items', error);
+					}
+					callback(users);
+				});
 			});
 		},
 
@@ -77,22 +134,25 @@ module.exports = function(models, logger,jwt,bcrypt) {
 					    if(error)
 						    { // need to check if data is legit or not here
 						       console.log(error);
-						    }
-					    else
-					    	{
-						    	models.channel.find({"_groupID" : {"$in": groups}},function(error, channels){ 
+						    } else {
+						    	models.channel.find({"_groupID" : {"$in": groups}},function(error, channels){
 							    if(error)
 								    { // need to check if data is legit or not here
 								       console.log(error);
 								    }
 							    else
 								    {
-								    	 resolve({groups: groups, channels:channels, currentUser: user});
+											models.user.find({}, function(error, users) {
+												if (error) {
+													logger.info('items', error);
+												} else{
+														resolve({groups: groups, channels:channels, currentUser: user, users:users});
+												}
+											});
 								    }
 					    		});
-					       
-					    }
-					});
+								}
+							});
 			       }
 				});
 			});
@@ -128,11 +188,16 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		/*
 		 * Delete User by Id
 		 */
-		deleteUser: function(id) {
-			models.users.findByIdAndRemove(id, function(error) {
-				if (error) {
-					logger.info('items:', error);
-				}
+		deleteUser: async function(id) {
+			return new Promise(function(resolve,reject){
+				models.users.findByIdAndRemove(id, function(error) {
+					if (error) {
+						logger.info('items:', error);
+					}
+					else{
+						resolve({statusCode: "Success", msg: "User Deleted" })
+					}
+				});
 			});
 		},
 

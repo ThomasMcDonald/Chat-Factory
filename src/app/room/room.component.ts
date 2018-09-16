@@ -35,14 +35,14 @@ export class RoomComponent implements OnInit {
   constructor(private socketService: SocketService, private dataService: DataService,private activatedRoute: ActivatedRoute, private router: Router, public dialog: MatDialog, private http: HttpClient) {
     this.getCurrentUser();
    this.paramsSubscribe=this.activatedRoute.params.subscribe(params => {
-      this.socketService.leaveRoom(this.channelID);
-      
+      this.socketService.leaveRoom(this.channelID,this.userDetails);
+
       this.channelID = params['channelID'];
       this.groupID = params['id'];
       this.Messages = [];
-      
-      this.socketService.joinRoom(this.channelID);
-      
+
+      this.socketService.joinRoom(this.channelID,this.userDetails);
+
 
 
     });

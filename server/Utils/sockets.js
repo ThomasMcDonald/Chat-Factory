@@ -1,12 +1,12 @@
 module.exports = function(models,controller, app, io) {
     console.log("Socket Module Loaded");
-    var Users = [];
-    
+    var Users = []; // Keeps Track of online users
+    var Channels = []; // Keeps track of all Channels current being used.
     io.on('connection', function(socket){
       console.log('a user connected');
       var userID;
       var currentUser;
-      
+
       socket.on('loginSetup', function(id){
           userID = id;
           //Users.push({_id: userID, _socket: socket.id})
@@ -14,34 +14,34 @@ module.exports = function(models,controller, app, io) {
            return await controller.user.getRelevantData(id);
         })(id).then(result =>{
           var groups = relevantData(result)
-          socket.emit('updatedData',{groups: groups, users: Users})
+          socket.emit('updatedData',{groups: groups, users: result.users})
         });
       });
-    
+
       socket.on('roomyMessage', function(content){
         console.log(content)
         controller.message.createMessage({_channelID: content.room, _content:content.msg, time:new Date()});
         io.in(content.room).emit('message',{status: "message", user: Users[userID], content: content.msg })
       });
-    
-      socket.on('subscribe', function(room) {
-            console.log('joining room', room);
-            
+
+      socket.on('subscribe', function(content) {
+            console.log('joining room', content.room);
+
              (async function(room){
            return await controller.message.getMessagesbyChannel(room);
-            })(room).then(result =>{
+            })(content.room).then(result =>{
               socket.emit('message', {status: "channelContent", content: result})
-              io.in(room).emit('message',{status: "joined", user: Users[userID] })
-              socket.join(room);
+              io.in(content.room).emit('message',{status: "joined", user: content.user })
+              socket.join(content.room);
             });
         })
-    
-      socket.on('unsubscribe', function(room) {
-            console.log('leaving room', room);
-            socket.leave(room);
-            io.in(room).emit('message',{status: "left", user: Users[userID] })
+
+      socket.on('unsubscribe', function(content) {
+            console.log('leaving room', content.room);
+            socket.leave(content.room);
+            io.in(content.room).emit('message',{status: "left", user: content.user })
         })
-    
+
       socket.on('requestData', function(id){
          currentUser = Users[id];
         (async function(id){
@@ -51,7 +51,7 @@ module.exports = function(models,controller, app, io) {
           socket.emit('updatedData',{groups: groups, users: Users})
         });
       });
-    
+
       socket.on('disconnect', function(){
           //io.emit('User Disconnected', {disconnectedUser: Users[userID]._username, users: Users})
           console.log("User Disconnected (Logged out)");
@@ -71,7 +71,7 @@ module.exports = function(models,controller, app, io) {
                 if(groups[i]['_channels'].length > 0) {
                     groups[i]['_activeChannel'] = groups[i]['_channels'][0]._id;
                 }
-              
+
             }
             return groups;
     }

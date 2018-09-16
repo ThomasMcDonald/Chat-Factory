@@ -34,6 +34,23 @@ module.exports = function(models, logger,jwt,bcrypt) {
 					}
 					});
 			});
-			}
+		},
+
+		removeGroup: async function(groupID){
+			return new Promise(function(resolve, reject){
+				models.group.findByIdAndRemove(groupID, function(err){
+					if(err) throw err;
+					else{
+						models.channel.remove({_groupID:groupID}, function(error){
+							if(error) throw error;
+							else{
+								resolve({statusCode: "Success", msg: "Group Removed" });
+								}
+							});
+							}
+						});
+			});
+		}
+
 		}
 };

@@ -49,15 +49,15 @@ export class SocketService {
     this.socket.disconnect();
   }
 
-  public joinRoom(room) {
+  public joinRoom(room,user) {
     if(room != 0){
-      this.socket.emit('subscribe', room);
+      this.socket.emit('subscribe', {room: room, user:user});
     }
   }
 
-  public leaveRoom(room) {
+  public leaveRoom(room,user) {
     if(room != 0){
-      this.socket.emit('unsubscribe', room);
+      this.socket.emit('unsubscribe',  {room: room, user:user});
     }
   }
 

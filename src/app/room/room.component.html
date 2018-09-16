@@ -1,14 +1,14 @@
 
 <div>
   <form (submit)="sendMessage()">
-    <input class="search-bottom" placeholder="Message" [(ngModel)]="inputMessage" name="inputMessage" type="text" required>
+    <input class="search-bottom" placeholder="Message" [(ngModel)]="inputMessage" name="inputMessage" type="text" required autocomplete="false">
     <button type="submit" style="display:none">hidden submit</button>
   </form>
-  <p>{{groupID}} - {{channelID}} </p>
 
   <ul>
     <li *ngFor="let message of Messages">
       {{message._content}}
     </li>
   </ul>
+  
 </div>

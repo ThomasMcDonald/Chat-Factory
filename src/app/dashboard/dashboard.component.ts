@@ -65,7 +65,7 @@ export class DashboardComponent implements OnInit {
   logout() {
     this.dataService.removeCurrentUserStorage();
     this.socketService.logout();
-    this.socketService.leaveRoom(this.selectedChannel);
+    this.socketService.leaveRoom(this.selectedChannel,this.userDetails);
     this.router.navigate(['/login']);
   }
 
