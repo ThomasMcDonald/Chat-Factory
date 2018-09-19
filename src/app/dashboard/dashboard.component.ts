@@ -176,9 +176,17 @@ export class DashboardComponent implements OnInit {
 
   // Opens Modal For inviting User to group or channel depending on option given
   inviteToGroupChannel(option, id) {
+  var channelID = id;
+  if(option == "Group") {
+    for(var i=0;i<this.Groups.length;i++){
+      if(this.Groups[i]._id == this.selectedGroup){
+        channelID = this.Groups[i]._channels[0]._id;
+      }
+    }
+  }
     let dialogRef = this.dialog.open(AddToGroupChannelComponent, {
       width: '600px',
-      data: { option: option, channelID: id, userDetails: this.userDetails }
+      data: { option: option, channelID: channelID, userDetails: this.userDetails, group: this.selectedGroup }
     });
     dialogRef.afterClosed().subscribe(result => {
       console.log(result)

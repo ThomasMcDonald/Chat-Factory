@@ -33,16 +33,16 @@ export class SocketService {
     this.socket = io.connect(this.url);
     this.getCurrentUser();
     this.socket.on('newData', (res) => {
-      if(res.owner == this.userDetails._id || res.owner == "All"){
-        this.socket.emit("requestData",this.userDetails._id);
-      }
+    //  if(res.owner == this.userDetails._id || res.owner == "All"){
+        this.socket.emit("requestData",this.userDetails);
+    //  }
     });
 
     this.loginSetup();
   }
 
   public loginSetup(){
-    this.socket.emit("loginSetup",this.userDetails._id);
+    this.socket.emit("loginSetup",this.userDetails);
   }
 
   public logout(){
@@ -62,7 +62,7 @@ export class SocketService {
   }
 
   public sendMessage(room,msg){
-    this.socket.emit("roomyMessage",{room:room, msg:msg})
+    this.socket.emit("roomyMessage",{room:room, msg:msg, from:{_id:this.userDetails._id,_username:this.userDetails._username}})
   }
 
   updateData(): Observable<any> {

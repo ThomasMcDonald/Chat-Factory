@@ -97,12 +97,12 @@ module.exports = function(models,controller, app, express, io) {
     // // They will be added to the Group as well, this is for potential error handling
      app.post('/addUsertoGroupChannel', function (req, res) {
        userID = req.body.userID;
-       groupChannelID = req.body.channelID;
+       channelID = req.body.channelID;
+       groupID = req.body.groupID;
        option = req.body.option
-
        if(option == "Group"){
          (async function(req,res){
-            return await controller.user.addUsertoGroup(userID, groupChannelID);
+            return await controller.user.addUsertoGroup(userID, groupID,channelID);
          })(req,res).then(result =>{
            res.send(result);
            io.emit('newData',{owner:userID});
@@ -110,7 +110,7 @@ module.exports = function(models,controller, app, express, io) {
         }
         else if(option == "Channel"){
           (async function(req,res){
-            return await controller.user.assUsertoChannel(userID, groupChannelID);
+            return await controller.user.assUsertoChannel(userID, groupID,channelID);
          })(req,res).then(result =>{
            res.send(result);
            io.emit('newData',{owner:userID});
@@ -125,8 +125,9 @@ module.exports = function(models,controller, app, express, io) {
     //
     // Create Channel
     app.post('/createChannel', function (req, res) {
+      console.log(req.body.owner);
       (async function(req,res){
-        return await controller.channel.createChannel({_name:req.body.name, _topic:req.body.topic, _groupID: req.body.groupID}, req.body.groupID);
+        return await controller.channel.createChannel({_name:req.body.name, _topic:req.body.topic, _groupID: req.body.groupID}, req.body.groupID,req.body.owner);
      })(req,res).then(result =>{
        res.send(result);
        io.emit('newData',{owner:req.body.owner});

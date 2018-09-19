@@ -39,14 +39,20 @@ module.exports = function(models, logger,jwt,bcrypt) {
 	 /*
 	 Add user to Group
 	 */
-	 addUsertoGroup: async function(userID, groupID){
+	 addUsertoGroup: async function(userID, groupID, channelID){
+		 console.log(groupID)
 		 return new Promise(function(resolve, reject){
-			 models.user.findByIdAndUpdate(userID, { $push: {'_inGroup': groupID}}, function(error, number, raw) {
-				 if (error) {
-					 logger.info('Users', error);
-				 }else{
-					 resolve({statusCode: "Success", msg: "User added to Group" });
-					 console.log("User Added to Group")
+			 models.channel.findOne({ _groupID: groupID }).exec(function (err, channel){
+				 if(err){reject(err)}
+				 else{
+					 models.user.findByIdAndUpdate(userID, { $push: {'_inGroup': groupID,'_inChannel': channel._id}}, function(error, number, raw) {
+						 if (error) {
+							 logger.info('Users', error);
+						 }else{
+							 resolve({statusCode: "Success", msg: "User added to Group" });
+							 console.log("User Added to Group")
+						 }
+					 });
 				 }
 			 });
 		 });
@@ -66,7 +72,7 @@ module.exports = function(models, logger,jwt,bcrypt) {
 	 },
 
 	 // Remove user from Channel
-	 addUsertoChannel: async function(userID, channelID){
+	 addUsertoChannel: async function(userID, groupID, channelID){
 		 return new Promise(function(resolve,reject){
 			 models.user.findByIdAndUpdate(userID, { $push: {'_inChannel': channelID}}, function(error, number, raw) {
 				 if (error) {
@@ -122,41 +128,59 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		},
 
 		/*
-		 * Find Users By Id
-		 */
-		getRelevantData: async function(id) {
-			return new Promise(function (resolve, reject) {
-			  models.user.findOne({ _id: id }).exec(function (err, user) {
-			       if (err) {
-			         console.log(err);
-			       } else if (user) {
-			       	models.group.find({"_id" : {"$in" : user._inGroup}},function(error, groups){ // finds all groups where the groups id is in the _inGroup[] array of user
-					    if(error)
-						    { // need to check if data is legit or not here
-						       console.log(error);
-						    } else {
-						    	models.channel.find({"_groupID" : {"$in": groups}},function(error, channels){
-							    if(error)
-								    { // need to check if data is legit or not here
-								       console.log(error);
-								    }
-							    else
-								    {
-											models.user.find({}, function(error, users) {
-												if (error) {
-													logger.info('items', error);
-												} else{
-														resolve({groups: groups, channels:channels, currentUser: user, users:users});
-												}
-											});
-								    }
-					    		});
-								}
-							});
-			       }
-				});
+	 * Find Users By Id
+	 */
+	 getRelevantData: async function(id) {
+		return new Promise(function (resolve, reject) {
+			models.user.findOne({ _id: id }).exec(function (err, user) {
+					 if (err) {
+						 console.log(err);
+					 } else if (user) {
+						models.group.find({"_id" : {"$in" : user._inGroup}},function(error, groups){ // finds all groups where the groups id is in the _inGroup[] array of user
+						if(error)
+							{ // need to check if data is legit or not here
+								 console.log(error);
+							} else {
+								models.channel.find({"_groupID" : {"$in": groups}},function(error, channels){
+								if(error)
+									{ // need to check if data is legit or not here
+										 console.log(error);
+									}
+								else
+									{
+									models.user.find({}, function(error, users) {
+										if (error) {
+											logger.info('items', error);
+										} else{
+											var returnGroups = []
+													for(var i = 0;i<groups.length;i++){
+															returnGroups.push(groups[i]);
+															for(var k=0;k<user._inChannel.length;k++){
+																	for(var j =0;j<channels.length;j++){
+																		 if(user._inChannel[k].equals(channels[j]._id) && groups[i]._id.equals(channels[j]._groupID)){
+																			 returnGroups[i]['_channels'].push(channels[j]);
+																			 console.log("same");
+																		 }
+																		 }
+																			if(returnGroups[i]['_channels'].length > 0) {
+																					returnGroups[i]['_activeChannel'] = returnGroups[i]['_channels'][0]._id;
+																			}
+
+																	}
+															}
+											resolve({groups: returnGroups, channels:channels, currentUser: user, users:users});
+										}
+									});
+									}
+								});
+							}
+						});
+
+
+					 }
 			});
-		},
+		});
+	},
 
 		/*
 		 * Create New Users

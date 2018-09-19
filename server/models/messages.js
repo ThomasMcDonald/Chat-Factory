@@ -13,10 +13,13 @@ var messageSchema =  mongoose.Schema({
   },
   _time: {
       type: String,
+  },
+  _from: {
+    type: Array,
   }
 });
 
 
-var Group = mongoose.model('Message', messageSchema);
-return Group;
+var Message = mongoose.model('Message', messageSchema);
+return Message;
 };

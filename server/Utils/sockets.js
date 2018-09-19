@@ -7,21 +7,23 @@ module.exports = function(models,controller, app, io) {
       var userID;
       var currentUser;
 
-      socket.on('loginSetup', function(id){
-          userID = id;
+      socket.on('loginSetup', function(user){
+          console.log(user);
+          currentUser = user;
           //Users.push({_id: userID, _socket: socket.id})
          (async function(id){
            return await controller.user.getRelevantData(id);
-        })(id).then(result =>{
-          var groups = relevantData(result)
-          socket.emit('updatedData',{groups: groups, users: result.users})
+        })(currentUser._id).then(result =>{
+          socket.emit('updatedData',{groups: result.groups, users: result.users})
         });
       });
 
       socket.on('roomyMessage', function(content){
-        console.log(content)
-        controller.message.createMessage({_channelID: content.room, _content:content.msg, time:new Date()});
-        io.in(content.room).emit('message',{status: "message", user: Users[userID], content: content.msg })
+        console.log(content.from)
+        if(content.room != null){
+            controller.message.createMessage({_channelID: content.room, _content:content.msg, _time:new Date(), _from: content.from});
+            io.in(content.room).emit('message',{status: "message", _channelID: content.room, _content: content.msg, _time:new Date(), _from: [content.from]})
+        }
       });
 
       socket.on('subscribe', function(content) {
@@ -42,13 +44,11 @@ module.exports = function(models,controller, app, io) {
             io.in(content.room).emit('message',{status: "left", user: content.user })
         })
 
-      socket.on('requestData', function(id){
-         currentUser = Users[id];
+      socket.on('requestData', function(user){
         (async function(id){
            return await controller.user.getRelevantData(id);
-        })(id).then(result =>{
-          var groups = relevantData(result)
-          socket.emit('updatedData',{groups: groups, users: Users})
+        })(user._id).then(result =>{
+          socket.emit('updatedData',{groups: result.groups, users: result.users})
         });
       });
 
@@ -56,23 +56,5 @@ module.exports = function(models,controller, app, io) {
           //io.emit('User Disconnected', {disconnectedUser: Users[userID]._username, users: Users})
           console.log("User Disconnected (Logged out)");
       });
-});
-
-
-    function relevantData(result){
-        var groups = []
-        for(var i = 0;i<result.groups.length;i++){
-            groups.push(result.groups[i]);
-            for(var j =0;j<result.channels.length;j++){
-               if(result.groups[i]._id.equals(result.channels[j]._groupID)){
-                 groups[i]['_channels'].push(result.channels[j]);
-               }
-               }
-                if(groups[i]['_channels'].length > 0) {
-                    groups[i]['_activeChannel'] = groups[i]['_channels'][0]._id;
-                }
-
-            }
-            return groups;
-    }
+    });
 };

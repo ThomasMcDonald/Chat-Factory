@@ -18,6 +18,7 @@ export class AddToGroupChannelComponent implements OnInit {
   channelID;
   option;
   userDetails;
+  groupID;
   get url():String {
     return this.dataService.url;
   }
@@ -31,21 +32,19 @@ export class AddToGroupChannelComponent implements OnInit {
   this.channelID = this.data.channelID;
   this.option = this.data.option;
   this.userDetails = this.data.userDetails;
-  console.log(this.userDetails);
+  this.groupID = this.data.group;
+
 }
 
   ngOnInit() {
 
   }
   onCloseConfirm(){
-    console.log(this.addUser);
-    this.http.post(this.url+'/addUsertoGroupChannel', {option: this.option, channelID:this.channelID, userID: this.addUser})
+    this.http.post(this.url+'/addUsertoGroupChannel', {option: this.option, channelID:this.channelID, userID: this.addUser, groupID:this.groupID})
       .subscribe(
         res => {
           if(res['statusCode'] == "UserError"){
             console.log(res['msg'])
-            //Throw error message for duplicate user here
-            //Probably in a text popup
           }
           else{
             this.dialogRef.close(res);

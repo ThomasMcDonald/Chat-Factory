@@ -15,7 +15,7 @@ export class RoomComponent implements OnInit {
 
   messagesSub: Subscription;
   public userDetails;
-
+  public onlineUsers = [];
 
   groupID = 0;
   channelID = 0;
@@ -56,6 +56,7 @@ export class RoomComponent implements OnInit {
                       console.log("You Joined the Channel")
                   }else{
                     console.log(message.user._username + " Has Joined the Channel")
+                    this.onlineUsers.push({_username: message.user._username, _id: message.user._id});
                   }
                   break;
             case "channelContent":
@@ -66,7 +67,7 @@ export class RoomComponent implements OnInit {
                   console.log(message.user._username + " Has Left the Channel")
                   break;
             case "message":
-                  this.Messages.push({from:message.user, _content:message.content});
+                  this.Messages.push({_from:message._from, _content:message._content, _time: message._time});
                   console.log(this.Messages);
                   break;
           }
