@@ -35,3 +35,13 @@
       font-weight:bold;
       padding:2px;
     }
+
+    .chatImg{
+      width:35px;
+      height:35px;
+      border-radius:50%;
+    }
+
+    .list{
+      list-style-type: none !important;
+    }

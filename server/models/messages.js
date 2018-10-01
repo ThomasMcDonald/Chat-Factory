@@ -11,6 +11,9 @@ var messageSchema =  mongoose.Schema({
     required: true,
     trim: true
   },
+  _imgContent: {
+    type: String
+  },
   _time: {
       type: String,
   },

@@ -16,66 +16,170 @@ The purpose of this Git repo is to manage the project, as they change over time.
 
 The .gitignore will ignore:
 <ul>
-    <li>serverCache.txt - For security purposes, this will ensure that when this repo is pulled none of the main data is pulled with it.</li>
     <li>dist folder -  This folder is created everytime ``` npm start ``` is called so it is not neccessary to include in the git repo.</li>
 </ul>
 
 
 ## Data Structures
-The users, groups and channels arrays are arrays of objects. Each element of the array was an object that contained specific information for a user, group or channel.
-These can be accessed by the client with the DataService(explained below)
+Previously the data was stored directly on the server in arrays. They have since been updated to mongoDB schemas.
 ```
-var Users = [];
-var Groups = [];
-var Channels = []; 
+Users
+channels
+Groups
+Messages
 ```
 
-For each array I have created a model that defined what data would be in each object.
-
-User Model:
+User Model: Has a pre insertion hook that will hash the password before inserting.
 ```
-var User = function (id,name,email,role,channels,groups) {
-    this._id = id;
-    this._username = name;
-    this._email = email;
-    this._inChannel = channels;
-    this._inGroup = groups;
-    this._role = role;
-    this._socket = "";
+
+
+module.exports = function(mongoose, bcrypt) {
+
+var userSchema =  mongoose.Schema({
+  _email: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  _username: {
+    type: String,
+    unique: true,
+    required: true,
+    trim: true
+  },
+  _password: {
+    type: String,
+    required: true,
+  },
+  _role:{
+    type: String,
+    required: true,
+  },
+  _profileImage:{
+    type: String,
+    required: true
+  },
+  _inChannel:{
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Channel' }],
+  },
+  _inGroup:{
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }],
+  }
+});
+
+//hashing a password before saving it to the database
+userSchema.pre('save', function (next) {
+  var user = this;
+  bcrypt.hash(user._password, 10, function (err, hash){
+    if (err) {
+      return next(err);
+    }
+    user._password = hash;
+    next();
+  })
+});
+
+var User = mongoose.model('User', userSchema);
+return User;
 };
-module.exports = User;
+
 ```
 
 Group Model:
 ```
-var Group = function (id,name,topic,owner) {
-    this._id = id;
-    this._name = name;
-    this._topic = topic;
-    this._owner = owner;
-}
 
-module.exports = Group;
+module.exports = function(mongoose) {
+  var groupSchema =  mongoose.Schema({
+    _name: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    _topic: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    _channels:{
+      type: Array
+    },
+    _activeChannel: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Channel',
+    }
+  });
+
+
+  var Group = mongoose.model('Group', groupSchema);
+  return Group;
+};
+
 
 ```
 Channel Model:
 ```
-var Channel = function (id, name,topic,groupID,owner) {
-    this._id = id;
-    this._name = name;
-    this._topic = topic;
-    this._groupID = groupID;
-    this._owner = owner;
+
+module.exports = function(mongoose, bcrypt) {
+
+var channelSchema =  mongoose.Schema({
+  _name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  _topic: {
+    type: String,
+    required: true,
+  },
+  _groupID:{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Group',
+    required: true,
+  }
+});
+
+var Channel = mongoose.model('Channel', channelSchema);
+return Channel;
 };
 
-module.exports = Channel;
+
+```
+Message Model:
+```
+
+module.exports = function(mongoose) {
+
+var messageSchema =  mongoose.Schema({
+    _channelID: {
+    type: mongoose.Schema.Types.ObjectId, ref: 'Channel',
+    required:true
+  },
+    _content: {
+    type: String,
+    required: true,
+    trim: true
+  },
+  _time: {
+      type: String,
+  },
+  _from: {
+    type: Array,
+  }
+});
+
+
+var Message = mongoose.model('Message', messageSchema);
+return Message;
+};
+
 
 ```
 
 ## Client & Server Responsibilites
 
 ### Initial Startup
-when the server is being started for the first time it will create a text file for the serverCache, this file is later used to store data and retrieve that data when the server is reset, similiar to how a database works.
+
 Depending on the development environment the entire project can be built and launched using ``` npm start ```, this command has been modified to use ``` ng build && node server.js ``` sequentially.
 
 Once built the server will serve the dist folder which contains the built angular project.
@@ -84,8 +188,8 @@ Once built the server will serve the dist folder which contains the built angula
 ### User API
 #### loginVerify
 ``` app.post('/loginVerify', function (req, res){}); ```  
-This request takes in the username provided by the login form, it then checks if the user exists in the current Users[] array.   
-If the user does not exist it will throw an error, if the user does exist it will prompt the client to navigate to dashboard.
+This request takes in the username and password provided by the login form, it will then check the mongo database to make sure the user exists.
+If the use exists it will check the password provided with the hashed password saved within the DB.
 
 #### Create User
 ``` app.post('/createUser', function (req, res){}); ```  
@@ -115,7 +219,7 @@ This function returns all details for the requested group.
 
 #### Remove Group
 ``` app.post('/removeGroup', function (req, res){}); ```    
-This function takes in the the GroupID that is going to be removed. 
+This function takes in the the GroupID that is going to be removed.
 It loops through Users[].inChannel[], Users[]._ingroup[], Channels[] removing elements from each that reflect the group being removed.
 finally it loops through the Groups[] removing the request Group.
 
@@ -131,10 +235,10 @@ It also prompts the clients to request an updated data set.
 
 #### Remove Channel
 ``` app.post('/removeChannel', function (req, res){}); ```  
-This function takes in the the channelID that is going to be removed. 
+This function takes in the the channelID that is going to be removed.
 It loops through Users[].inChannel[] removing elements from each that reflect the channel being removed.
 finally it loops through the Channels[] removing the request Group.
-As well as removing any Users._inChannel[] elements that equal to the channelID being removed. 
+As well as removing any Users._inChannel[] elements that equal to the channelID being removed.
 
 ### Hybrid Group and Channel API
 The below functions cater for 2 options each, this has been done to prevent redundancy.  
@@ -144,7 +248,7 @@ Depending on the option given is what is removed.
 ``` option == channel ```  
 removing any Users._inChannel[] elements that equal to the channelID being removed.  
 ``` option == Group ```   
-removing any Users.inGroup[] elements that equal to the groupID being removed. 
+removing any Users.inGroup[] elements that equal to the groupID being removed.
 The Channels that belong to the group will be removed from the User[]._inChannel array, removing any Channels that _owner equals the groupID being removed.  
 It also prompts the clients to request an updated data set.
 #### Add User to Group or Channel
@@ -167,7 +271,7 @@ When the server recieves the 'requestData' message it will send all filtered dat
 ```  socket.on('disconnect', function(id){}); ```    
 This is called when the server detects that a user has disconnected, generally this means the user has logged out.
 
-    
+
 ### Custom Functions
 The below functions help with the functionality explained above.  
 ``` function usersChannels(currentUser){} ```  
@@ -202,7 +306,7 @@ First accessing the webpage the user will be forwarded to the /login route to us
 
 ### Main components
 
-#### Login 
+#### Login
 This view allows the user to log into the webapp. It uses a angular form to submit details to the /loginVerify API.  
 This page can be accessed via ``` /login ``` or ```/```
 

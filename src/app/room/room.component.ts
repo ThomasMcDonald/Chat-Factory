@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input,ElementRef, ViewChild } from '@angular/core';
 import {Router, ActivatedRoute, Params} from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
@@ -16,11 +16,11 @@ export class RoomComponent implements OnInit {
   messagesSub: Subscription;
   public userDetails;
   public onlineUsers = [];
-
+  @ViewChild('fileInput') fileInput: ElementRef;
   groupID = 0;
   channelID = 0;
   inputMessage = "";
-
+  imgContent = "";
   paramsSubscribe;
   Messages = [];
   get Users():any[] {
@@ -78,8 +78,15 @@ export class RoomComponent implements OnInit {
   //Send message to server for room distribution
   sendMessage(){
     if(this.inputMessage.localeCompare("") != 0 || this.inputMessage.localeCompare(" ") != 0){
-      this.socketService.sendMessage(this.channelID,this.inputMessage);
+      if(this.imgContent != ""){
+        this.socketService.sendMessagewithImage(this.channelID,this.inputMessage, this.imgContent);
+      }else{
+        this.socketService.sendMessage(this.channelID,this.inputMessage);
+      }
+
       this.inputMessage = "";
+      this.imgContent = "";
+      
     }else{
       console.log("no empty messages please")
     }
@@ -94,6 +101,19 @@ export class RoomComponent implements OnInit {
   ngOnDestroy() {
     this.messagesSub.unsubscribe();
     this.paramsSubscribe.unsubscribe();
+}
+
+onFileChange(event) {
+  console.log(event);
+  let reader = new FileReader();
+  if(event.target.files && event.target.files.length > 0) {
+    let file = event.target.files[0];
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      this.imgContent = reader.result.split(',')[1]
+
+    }
+  }
 }
 
 }

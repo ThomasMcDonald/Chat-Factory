@@ -65,6 +65,11 @@ export class SocketService {
     this.socket.emit("roomyMessage",{room:room, msg:msg, from:{_id:this.userDetails._id,_username:this.userDetails._username, _profileImage:this.userDetails._profileImage}})
   }
 
+  public sendMessagewithImage(room,msg,Img){
+    this.socket.emit("roomyMessage",{room:room, msg:msg, img: Img,from:{_id:this.userDetails._id,_username:this.userDetails._username, _profileImage:this.userDetails._profileImage}})
+  }
+
+
   updateData(): Observable<any> {
    this.socket.on('updatedData', (res) => {
      this.dataObserver.next(res);

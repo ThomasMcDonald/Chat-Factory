@@ -8,7 +8,6 @@ module.exports = function(models,controller, app, io) {
       var currentUser;
 
       socket.on('loginSetup', function(user){
-          console.log(user);
           currentUser = user;
           //Users.push({_id: userID, _socket: socket.id})
          (async function(id){
@@ -19,10 +18,9 @@ module.exports = function(models,controller, app, io) {
       });
 
       socket.on('roomyMessage', function(content){
-        console.log(content.from)
         if(content.room != null){
-            controller.message.createMessage({_channelID: content.room, _content:content.msg, _time:new Date(), _from: content.from});
-            io.in(content.room).emit('message',{status: "message", _channelID: content.room, _content: content.msg, _time:new Date(), _from: [content.from]})
+            controller.message.createMessage({_channelID: content.room, _content:content.msg, _imgContent:content.img, _time:new Date(), _from: content.from});
+            io.in(content.room).emit('message',{status: "message", _channelID: content.room, _content: content.msg, _imgContent:content.img, _time:new Date(), _from: [content.from]})
         }
       });
 
