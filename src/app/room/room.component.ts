@@ -67,7 +67,7 @@ export class RoomComponent implements OnInit {
                   console.log(message.user._username + " Has Left the Channel")
                   break;
             case "message":
-                  this.Messages.push({_from:message._from, _content:message._content, _time: message._time});
+                  this.Messages.push({_from:message._from, _content:message._content, _imgContent:message._imgContent, _time: message._time});
                   console.log(this.Messages);
                   break;
           }
@@ -86,7 +86,7 @@ export class RoomComponent implements OnInit {
 
       this.inputMessage = "";
       this.imgContent = "";
-      
+
     }else{
       console.log("no empty messages please")
     }
