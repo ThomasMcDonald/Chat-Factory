@@ -23,6 +23,9 @@ import { AddToGroupChannelComponent } from './modals/add-to-group-channel/add-to
 import { RemoveUserGroupChannelComponent } from './modals/remove-user-group-channel/remove-user-group-channel.component';
 import { DeleteUserComponent } from './modals/delete-user/delete-user.component';
 
+// File Uploading
+import {FileSelectDirective } from 'ng2-file-upload/ng2-file-upload';
+
 
 @NgModule({
   declarations: [
@@ -35,7 +38,8 @@ import { DeleteUserComponent } from './modals/delete-user/delete-user.component'
     NewChannelComponent,
     AddToGroupChannelComponent,
     RemoveUserGroupChannelComponent,
-    DeleteUserComponent
+    DeleteUserComponent,
+    FileSelectDirective
   ],
   imports: [
     BrowserModule,

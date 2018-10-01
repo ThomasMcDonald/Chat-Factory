@@ -7,7 +7,7 @@
 
   <ul>
     <li *ngFor="let message of Messages">
-    {{message._from[0]._username}}  {{message._content}}
+    <img [src]="'data:image/jpg;base64,'+message._from[0]._profileImage"/> {{message._from[0]._username}}  {{message._content}}
     </li>
   </ul>
 

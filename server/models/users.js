@@ -23,6 +23,10 @@ var userSchema =  mongoose.Schema({
     type: String,
     required: true,
   },
+  _profileImage:{
+    type: String,
+    required: true
+  },
   _inChannel:{
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Channel' }],
   },

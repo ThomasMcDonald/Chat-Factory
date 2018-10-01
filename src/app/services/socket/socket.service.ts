@@ -62,7 +62,7 @@ export class SocketService {
   }
 
   public sendMessage(room,msg){
-    this.socket.emit("roomyMessage",{room:room, msg:msg, from:{_id:this.userDetails._id,_username:this.userDetails._username}})
+    this.socket.emit("roomyMessage",{room:room, msg:msg, from:{_id:this.userDetails._id,_username:this.userDetails._username, _profileImage:this.userDetails._profileImage}})
   }
 
   updateData(): Observable<any> {

@@ -1,4 +1,4 @@
-module.exports = function(models, logger,jwt,bcrypt) {
+module.exports = function(models, logger,jwt,bcrypt,multer) {
 
 	return {
 
@@ -186,8 +186,9 @@ module.exports = function(models, logger,jwt,bcrypt) {
 		 * Create New Users
 		 */
 		createUser: async function(data) {
+			var uploadDIR = '/server/userContent/uploads'
+			console.log(data)
 			return new Promise(function (resolve, reject) {
-				console.log(data);
 				var newUser = new models.user(data);
 		    	models.user.findOne({ _username: data._username }).exec(function (err, user) {
 		        if (err) {

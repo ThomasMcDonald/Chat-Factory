@@ -1,6 +1,6 @@
 <div>
     <h2 mat-dialog-title>Create New User</h2>
-     <form [formGroup]="newUserForm" (ngSubmit)="onCloseConfirm()">
+     <form [formGroup]="newUserForm" (ngSubmit)="onCloseConfirm()" enctype="multipart/form-data">
     <mat-dialog-content class="mat-typography login">
             <mat-form-field class="full-width">
                 <input matInput placeholder="Email" formControlName="email" required>
@@ -17,8 +17,8 @@
                 <mat-option value="Regular">Regular User</mat-option>
                 <mat-option value="Group">Group Admin</mat-option>
               </mat-select>
-
             </mat-form-field>
+      <input type="file" id="profileImg" (change)="onFileChange($event)" #fileInput>
     </mat-dialog-content>
     <p style="color:red;"> {{ errorMsg }}</p>
   <mat-dialog-actions>
