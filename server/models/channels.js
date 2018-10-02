@@ -1,3 +1,7 @@
+/*
+This file defines the mongoose schema for the Channel.
+*/
+
 
 module.exports = function(mongoose, bcrypt) {
 

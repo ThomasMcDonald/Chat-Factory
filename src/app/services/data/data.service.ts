@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 
+
+/*
+This service handles all data manipulation between components
+see below for function definitions.
+*/
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,10 +26,12 @@ export class DataService {
   constructor() {
    }
 
+// Observable to get user content.
   getCurrentUser(): Observable<any[]> {
     return of(this.currentUser = JSON.parse(localStorage.getItem('UserDetails')));
   }
 
+// Removes the local storage of the user, when they log out
   removeCurrentUserStorage(){
     localStorage.removeItem('UserDetails');
   }

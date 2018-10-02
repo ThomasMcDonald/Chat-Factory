@@ -1,5 +1,6 @@
-//Database connection
-
+/*
+This file connects to the database and then exports the db variable to be used by other files.
+*/
 module.exports = function(chalk, db) {
 	db.on('error', console.error.bind(console, 'connection error:'));
 

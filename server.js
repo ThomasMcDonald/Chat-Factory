@@ -57,7 +57,9 @@ require(__dirname + '/server/Utils/routes')(models, controller, app, express, io
 
 setupData();
 
-
+// Adding a default user, this will run each time the server starts up, but wont add duplicates
 async function setupData(){
     return await controller.user.createUser({_email:"super@gmail.com",_username:"super",_password:"Super",_role: "Super",_profileImage:"/server/uploads",_inChannel:[],_inGroup:[]})
 }
+
+module.exports = server;

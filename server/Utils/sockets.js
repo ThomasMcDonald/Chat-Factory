@@ -17,6 +17,7 @@ module.exports = function(models,controller, app, io) {
         });
       });
 
+      // Sendds messages to room ID
       socket.on('roomyMessage', function(content){
         if(content.room != null){
             controller.message.createMessage({_channelID: content.room, _content:content.msg, _imgContent:content.img, _time:new Date(), _from: content.from});
@@ -24,6 +25,7 @@ module.exports = function(models,controller, app, io) {
         }
       });
 
+      // This is run when a user joins the room
       socket.on('subscribe', function(content) {
             console.log('joining room', content.room);
 

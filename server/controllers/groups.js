@@ -36,6 +36,7 @@ module.exports = function(models, logger,jwt,bcrypt) {
 			});
 		},
 
+		// This function will delete the group and all related channels.
 		removeGroup: async function(groupID){
 			return new Promise(function(resolve, reject){
 				models.group.findByIdAndRemove(groupID, function(err){

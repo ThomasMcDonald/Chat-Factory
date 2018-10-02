@@ -1,4 +1,6 @@
-
+/*
+This file defines the mongoose schema for the Group.
+*/
 module.exports = function(mongoose) {
 
 var groupSchema =  mongoose.Schema({

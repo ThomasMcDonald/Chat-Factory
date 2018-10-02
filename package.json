@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng build && node server.js",
     "build": "ng build",
-    "test": "ng test",
+    "test": "mocha ./unitTest/test.js",
+    "intTest": "mocha ./intergrationTest/test.js",
     "lint": "ng lint",
     "e2e": "ng e2e"
   },

@@ -1,4 +1,6 @@
-
+/*
+This file defines the mongoose schema for the Message.
+*/
 module.exports = function(mongoose) {
 
 var messageSchema =  mongoose.Schema({

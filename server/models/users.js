@@ -1,4 +1,6 @@
-
+/*
+This file defines the mongoose schema for the User.
+*/
 
 module.exports = function(mongoose, bcrypt) {
 

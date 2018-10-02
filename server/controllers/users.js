@@ -2,8 +2,11 @@ module.exports = function(models, logger,jwt,bcrypt,multer) {
 
 	return {
 
-
-    	loginVerify: async function(data,callback){
+			/*
+			This function takes in the username and password of the user trying to loginVerify
+			it will hash the given password and compare with the saved password in the Database using bcrypt
+			*/
+			loginVerify: async function(data,callback){
 	    	return new Promise(function (resolve, reject) {
 		      console.log(data.username);
 		      models.user.findOne({ _username: data.username }).exec(function (err, user) {
@@ -85,6 +88,10 @@ module.exports = function(models, logger,jwt,bcrypt,multer) {
 		 });
 	 },
 
+	 /*
+	 This function takes in a userID and ChannelID,
+	 it will remove the given userID from the channel
+	 */
 	 removeUserFromChannel: async function(userID, channelID){
 		 return new Promise(function(resolve, reject){
 			 models.user.findByIdAndUpdate(userID,{ $pop: {'_inChannel': channelID}}, function(error,number,raw){
@@ -110,11 +117,7 @@ module.exports = function(models, logger,jwt,bcrypt,multer) {
 
 
 		/*
-		 * Items Methods
-		 */
-
-		/*
-		 * Get All Users
+		 * This function will get all users, currently not in use.
 		 */
 		getUsers: async function(callback) {
 			return new Promise(function(resolve,reject){
@@ -128,7 +131,7 @@ module.exports = function(models, logger,jwt,bcrypt,multer) {
 		},
 
 		/*
-	 * Find Users By Id
+	 * This function will get all data that relates to the given userID
 	 */
 	 getRelevantData: async function(id) {
 		return new Promise(function (resolve, reject) {

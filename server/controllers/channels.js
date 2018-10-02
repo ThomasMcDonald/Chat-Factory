@@ -1,6 +1,7 @@
 module.exports = function(models, logger,jwt,bcrypt) {
 
 	return {
+		// This function will create a channel
 		createChannel: async function(channel,groupID,userID){
 			return new Promise(function (resolve, reject) {
 				var newChannel = new models.channel(channel)
@@ -30,6 +31,7 @@ module.exports = function(models, logger,jwt,bcrypt) {
 			});
 		},
 
+		// This function will remove a channel.
 		removeChannel: async function(channelID,groupID){
 			return new Promise(function (resolve, reject) {
 				models.channel.findByIdAndRemove(channelID, function(err) {

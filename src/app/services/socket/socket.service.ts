@@ -6,6 +6,12 @@ import { DataService } from '../data/data.service'
 import { HttpClient } from '@angular/common/http';
 import io from "socket.io-client";
 
+
+/*
+
+This service handles all incoming and outgoing traffic via sockets.
+see below for function definitions.
+*/
 @Injectable({
   providedIn: 'root'
 })
@@ -41,35 +47,40 @@ export class SocketService {
     this.loginSetup();
   }
 
+// emits the loginSetup message to the server
   public loginSetup(){
     this.socket.emit("loginSetup",this.userDetails);
   }
 
+// Disconnects the socket.
   public logout(){
     this.socket.disconnect();
   }
 
+//Asks the server to add the user to the given room
   public joinRoom(room,user) {
     if(room != 0){
       this.socket.emit('subscribe', {room: room, user:user});
     }
   }
-
+// Remove the user from the given room
   public leaveRoom(room,user) {
     if(room != 0){
       this.socket.emit('unsubscribe',  {room: room, user:user});
     }
   }
 
+// Send message to given Room
   public sendMessage(room,msg){
     this.socket.emit("roomyMessage",{room:room, msg:msg, from:{_id:this.userDetails._id,_username:this.userDetails._username, _profileImage:this.userDetails._profileImage}})
   }
 
+// Send message/img to given Room
   public sendMessagewithImage(room,msg,Img){
     this.socket.emit("roomyMessage",{room:room, msg:msg, img: Img,from:{_id:this.userDetails._id,_username:this.userDetails._username, _profileImage:this.userDetails._profileImage}})
   }
 
-
+// This is an observable that a component subscribes to, it will update the user whenever new content has been added. This excludes messages.
   updateData(): Observable<any> {
    this.socket.on('updatedData', (res) => {
      this.dataObserver.next(res);
@@ -79,6 +90,7 @@ export class SocketService {
    });
  }
 
+// This is an observable that the room component subscribes to, it will update the room everytime a new message has been sent.
  getMessages(): Observable<any> {
    this.socket.on('message', (message) => {
      this.messageObserver.next(message);
@@ -88,6 +100,7 @@ export class SocketService {
    });
  }
 
+//This is a sneaky handler that will works with the observables.
  private handleError(error) {
      console.error('server error:', error);
      if (error.error instanceof Error) {
