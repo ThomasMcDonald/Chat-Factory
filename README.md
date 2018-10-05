@@ -1,4 +1,4 @@
-# Chat Factory
+# MEAN Stack Chat Room
 
 ## Production
 You can view the production release of this web application at:
