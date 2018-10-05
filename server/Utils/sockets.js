@@ -28,7 +28,6 @@ module.exports = function(models,controller, app, io) {
       // This is run when a user joins the room
       socket.on('subscribe', function(content) {
             console.log('joining room', content.room);
-
              (async function(room){
            return await controller.message.getMessagesbyChannel(room);
             })(content.room).then(result =>{
@@ -39,6 +38,7 @@ module.exports = function(models,controller, app, io) {
         })
 
       socket.on('unsubscribe', function(content) {
+        console.log(content);
             console.log('leaving room', content.room);
             socket.leave(content.room);
             io.in(content.room).emit('message',{status: "left", user: content.user })

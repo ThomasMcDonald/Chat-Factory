@@ -23,7 +23,7 @@ module.exports = function(models,controller, app, express, io) {
     // // Create new user function, will throw error if user already exists
     app.post('/createUser', function (req, res) {
         (async function(req,res){
-           return await  controller.user.createUser({_email:req.body.email,_username:req.body.username.toLowerCase(),_password:"Super",_role: req.body.role, _profileImage:req.body.profileImg,_inChannel:[],_inGroup:[]})
+           return await  controller.user.createUser({_email:req.body.email,_username:req.body.username.toLowerCase(),_password:req.body.password ,_role: req.body.role, _profileImage:req.body.profileImg,_inChannel:[],_inGroup:[]})
         })(req,res).then(result =>{
           res.send(result);
           io.emit('newData',{owner:"All"});
@@ -125,7 +125,6 @@ module.exports = function(models,controller, app, express, io) {
     //
     // Create Channel
     app.post('/createChannel', function (req, res) {
-      console.log(req.body.owner);
       (async function(req,res){
         return await controller.channel.createChannel({_name:req.body.name, _topic:req.body.topic, _groupID: req.body.groupID}, req.body.groupID,req.body.owner);
      })(req,res).then(result =>{

@@ -1,19 +1,21 @@
 
-<div>
-  <form (submit)="sendMessage()">
-    <input class="search-bottom" placeholder="Message" [(ngModel)]="inputMessage" name="inputMessage" type="text" required autocomplete="false">
-    <input type="file" id="profileImg" (change)="onFileChange($event)" #fileInput>
-    <button type="submit" style="display:none">hidden submit</button>
-  </form>
+ <main id="content">
 
   <ul>
     <li class="list" *ngFor="let message of Messages">
     <img class="chatImg" [src]="'data:image/jpg;base64,'+message._from[0]._profileImage"/>
+    {{message._from[0]._username}} - {{message._content}}
     <ng-container *ngIf="message._imgContent">
       <img [src]="'data:image/jpg;base64,'+message._imgContent"/>
     </ng-container>
-    {{message._from[0]._username}} - {{message._content}}
     </li>
   </ul>
 
-</div>
+  <div class="container input">
+    <form (submit)="sendMessage()">
+      <input class="messageInput" placeholder="Message" [(ngModel)]="inputMessage" name="inputMessage" type="text" required autocomplete="false">
+      <input type="file" id="profileImg" (change)="onFileChange($event)" #fileInput>
+      <button type="submit" style="display:none">hidden submit</button>
+    </form>
+    </div>
+</main>

@@ -17,9 +17,9 @@ describe('Groups', () => {
       describe('/POST Create Group', () => {
         it('it should not POST a Group without title field', (done) => {
         let group = {
-          _name:"Calamari Race Team",
-          _topic:"Squid tings",
-          _channels:[]
+          owner: 1,
+          name:"Calamari Race Team",
+          topic:"Squid tings"
         }
       chai.request(server)
           .post('/createGroup')
@@ -27,8 +27,7 @@ describe('Groups', () => {
           .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
-                res.body.should.have.property('errors');
-                res.body.errors.should.have.property('_name');
+                res.body.should.have.property('statusCode');
             done();
           });
     });
@@ -37,12 +36,13 @@ describe('Groups', () => {
 });
 describe('Channels', () => {
     // Create Channels test
-      describe('/POST Create Group', () => {
-        it('it should not POST a Group without name field', (done) => {
+      describe('/POST Create Channel', () => {
+        it('it should not POST a Channel without name field', (done) => {
         let channel = {
-          _name:"Calamari Race Team",
-          _topic:"Squid tings",
-          _groupID:1
+          name:"Calamari Race Team",
+          topic:"Squid tings",
+          groupID:1,
+          owner: 1
         }
       chai.request(server)
           .post('/createChannel')
@@ -50,8 +50,7 @@ describe('Channels', () => {
           .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
-                res.body.should.have.property('errors');
-                res.body.errors.should.have.property('_email');
+                res.body.should.have.property('statusCode');
             done();
           });
     });
@@ -59,23 +58,18 @@ describe('Channels', () => {
   });
 });
 describe('Users', () => {
-    beforeEach((done) => { //Before each test we empty the database
-        User.remove({}, (err) => {
-           done();
-        });
-    });
 
     // Create user test
       describe('/POST Create User', () => {
         it('it should not POST a User without email field', (done) => {
         let user = {
-          _email:"super@gmail.com",
-          _username:"super",
-          _password:"Super",
-          _role: "Super",
-          _profileImage:"/server/uploads",
-          _inChannel:[],
-          _inGroup:[]
+          email:"super@gmail.com",
+          username:"super",
+          password:"Super",
+          role: "Super",
+          profileImage:"/server/uploads",
+          inChannel:[],
+          inGroup:[]
         }
       chai.request(server)
           .post('/createUser')
@@ -83,8 +77,7 @@ describe('Users', () => {
           .end((err, res) => {
                 res.should.have.status(200);
                 res.body.should.be.a('object');
-                res.body.should.have.property('errors');
-                res.body.errors.should.have.property('_email');
+                res.body.should.have.property('statusCode');
             done();
           });
     });
@@ -94,8 +87,8 @@ describe('Users', () => {
   describe('/POST Login User', () => {
     it('it should not Login user if password is incorrect', (done) => {
     let user = {
-      _username:"super",
-      _password:"Super",
+      username:"super",
+      password:"Super",
     }
   chai.request(server)
       .post('/loginVerify')
@@ -103,7 +96,7 @@ describe('Users', () => {
       .end((err, res) => {
             res.should.have.status(200);
             res.body.should.be.a('object');
-            res.body.should.have.property('errors');
+            res.body.should.have.property('statusCode');
         done();
       });
     });
@@ -111,21 +104,21 @@ describe('Users', () => {
 });
 
 
-  // Deleting user test
-  describe('/POST Delete User', () => {
-    it('it should delete the user with given id', (done) => {
-    let user = "12312312312" // Change to appropriate later
-  chai.request(server)
-      .post('/createUser')
-      .send(user)
-      .end((err, res) => {
-            res.should.have.status(200);
-            res.body.should.be.a('object');
-            res.body.should.have.property('errors');
-        done();
-      });
-    });
-  });
+  // // Deleting user test
+  // describe('/POST Delete User', () => {
+  //   it('it should delete the user with given id', (done) => {
+  //   let user = "12312312312" // Change to appropriate later
+  // chai.request(server)
+  //     .post('/createUser')
+  //     .send(user)
+  //     .end((err, res) => {
+  //           res.should.have.status(200);
+  //           res.body.should.be.a('object');
+  //           res.body.should.have.property('statusCode');
+  //       done();
+  //     });
+  //   });
+  // });
 
 });
 

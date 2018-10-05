@@ -25,6 +25,7 @@ export class NewUserComponent implements OnInit {
     email: ['', Validators.required],
     username: ['', Validators.required],
     role: ['',Validators.required],
+    password: ['', Validators.required],
     profileImg: null
   });
 
